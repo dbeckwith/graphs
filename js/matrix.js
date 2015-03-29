@@ -229,7 +229,7 @@ function Matrix(values) {
               __det += this.get(i, j) * this.cofactor(i, j);
           }
         }
-        else { // use PLU decomp (detA = detP-1 * detL * detU = (-1)^sgn(P) * prod l_ii * prod u_ii = (-1)^sgn(P) * prod u_ii
+        else { // use PLU decomp O(n^3) (detA = det(P * L * U) = detP * detL * detU = (-1)^sgn(P) * prod l_ii * prod u_ii = (-1)^sgn(P) * prod u_ii)
           console.log('using PLU');
           this.PLUDecomp();
           __det = __PLU_rowChanges % 2 === 0 ? 1 : -1;

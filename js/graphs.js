@@ -13,9 +13,6 @@ $(function() {
   width = $('#canvas').width();
   height = $('#canvas').height();
 
-  var nodeObjs = svg.selectAll('.node');
-  var linkObjs = svg.selectAll('.link');
-
   var force = d3.layout.force()
           .size([width, height])
           .linkDistance(100)
@@ -46,6 +43,8 @@ $(function() {
   var nodes = force.nodes();
   var links = force.links();
 
+  var drag = force.drag();
+
   function selectNode(node) {
     node.classed('node-selected', true)
             .transition()
@@ -60,7 +59,15 @@ $(function() {
             .attr('r', 8);
   }
 
-  svg.append('rect')
+  function clear() {
+    nodes.splice(0, nodes.length);
+    links.splice(0, links.length);
+    deselectNode(svg.selectAll('.node-selected'));
+  }
+
+  var canvasGroup = svg.append('g');
+
+  canvasGroup.append('rect')
           .attr('class', 'bg')
           .attr('width', width)
           .attr('height', height)
@@ -75,19 +82,30 @@ $(function() {
             }
           });
 
+  var nodeObjs = canvasGroup.selectAll('.node');
+  var linkObjs = canvasGroup.selectAll('.link');
+
   function update() {
     linkObjs = linkObjs.data(links);
     linkObjs.enter()
             .insert('line', '.node')
-            .attr('class', 'link');
-    linkObjs.exit().remove();
+            .attr('class', 'link')
+            .attr('opacity', 0)
+            .transition()
+            .duration(200)
+            .attr('opacity', 1);
+    linkObjs.exit()
+            .transition()
+            .duration(200)
+            .attr('opacity', 0)
+            .remove();
 
     nodeObjs = nodeObjs.data(nodes);
     nodeObjs.enter()
             .append('circle')
             .attr('class', 'node')
-            .attr('r', 8)
-            .call(force.drag)
+            .attr('r', 0)
+            .call(drag)
             .on('click', function() {
               if (d3.event.defaultPrevented)
                 return;
@@ -133,8 +151,15 @@ $(function() {
                   selectNode(d3.select(this));
                 }
               }
-            });
-    nodeObjs.exit().remove();
+            })
+            .transition()
+            .duration(200)
+            .attr('r', 8);
+    nodeObjs.exit()
+            .transition()
+            .duration(200)
+            .attr('r', 0)
+            .remove();
 
     force.start();
 
@@ -179,6 +204,29 @@ $(function() {
     }).css({ 'color': '#a00' });
     updateTex();
   }
+
+  d3.xml('img/erase.svg', 'image/svg+xml', function(xml) {
+    svg.each(function() {
+      d3.select(this.appendChild(xml.documentElement))
+              .attr('class', 'erase-btn')
+              .attr('width', '40')
+              .attr('height', '40')
+              .attr('x', '5')
+              .attr('y', '5')
+              .on('mouseover', function() {
+                d3.select(this).select('svg circle')
+                        .attr('fill', 'red');
+              })
+              .on('mouseout', function() {
+                d3.select(this).select('svg circle')
+                        .attr('fill', 'none');
+              })
+              .on('click', function() {
+                clear();
+                update();
+              });
+    });
+  });
 
   var graphProps = {
     order: {
@@ -563,8 +611,7 @@ $(function() {
       console.log(g.vs.length + ' verts: ' + JSON.stringify(g.vs));
       console.log(g.es.length + ' edges: ' + JSON.stringify(g.es));
       console.log(g.layout);
-      nodes.splice(0, nodes.length);
-      links.splice(0, links.length);
+      clear();
       g.vs.forEach(function(v) {
         var pos = g.layout(v);
         console.log(v + ' ' + JSON.stringify(pos));

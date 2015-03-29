@@ -9,20 +9,24 @@
     border: 1px solid #ddd;
 }
 
-svg .node {
+#canvas .node {
     fill: black;
 }
 
-svg .node-selected {
+#canvas .node-selected {
     fill: green;
 }
 
-svg .link {
+#canvas .link {
     stroke: blue;
 }
 
-svg .bg {
+#canvas .bg {
     fill: none;
+    pointer-events: all;
+}
+
+#canvas .erase-btn {
     pointer-events: all;
 }
 
