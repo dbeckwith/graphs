@@ -449,7 +449,7 @@ $(function() {
           if (es.length === m * n)
             return Math.pow(m, n - 1) * Math.pow(n, m - 1);
         }
-        // TODO: not always exact, have to round, even then sometimes off, maybe could do with fractions?
+        // TODO: not always exact, have to round, even then sometimes off (by a lot), maybe could do with fractions?
         return Math.floor(graphProps.laplMatr.value.cofactor(0, 0));
       }
     }
@@ -568,6 +568,34 @@ $(function() {
           }
         }
         return { vs: vs, es: es, layout: graphLayouts.horizLines(n + m, m) };
+      }
+    },
+    hypercube: {
+      desc: 'hypercube graph',
+      math: '\\(Q_n\\)',
+      args: {
+        'n': {
+          min: 0,
+          def: 3
+        }
+      },
+      make: function(n) {
+        n = 1 << n;
+        var vs = _.range(n);
+        var es = [];
+        for (var i = 0; i < n; i++) {
+          for (var j = i + 1; j < n; j++) {
+            var dist = 0;
+            var val = i ^ j;
+            while (val !== 0 && dist < 2) {
+              dist++;
+              val &= val - 1;
+            }
+            if (dist === 1)
+              es.push([i, j]);
+          }
+        }
+        return { vs: vs, es: es, layout: graphLayouts.radial(n) };
       }
     }
   };
