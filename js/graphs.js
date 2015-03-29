@@ -13,9 +13,11 @@ $(function() {
   width = $('#canvas').width();
   height = $('#canvas').height();
 
+  // TODO: add option to freeze vertices
   var force = d3.layout.force()
           .size([width, height])
           .linkDistance(100)
+          .linkStrength(0.1)
           .charge(-300)
           .on('tick', function() {
             linkObjs
