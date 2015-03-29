@@ -346,7 +346,7 @@ $(function() {
       desc: 'is bipartite',
       longDesc: 'Whether the vertex set can be partitioned into two disjoint subsets such that all edges are only between different subsets or not.',
       calc: function(vs, es) {
-        if (!graphProps.connected.value) // not connected, not bipartite
+        if (!graphProps.connected.value || graphProps.numTris.value !== 0) // not connected or has triangles, not bipartite
           return { bipartite: false };
         var vs2 = _.range(vs.length);
         var color = []; // color array, 0 means uncolored, 1 and -1 are colors
