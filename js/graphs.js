@@ -13,6 +13,8 @@ $(function() {
   width = $('#canvas').width();
   height = $('#canvas').height();
 
+  // TODO: add help button that scrolls to bottom and highlights help area for a second
+
   // TODO: add button to enable forces (linkStrength 0.1, gravity 0.1, charge -300
   var force = d3.layout.force()
           .size([width, height])
@@ -68,9 +70,9 @@ $(function() {
     deselectNode(svg.selectAll('.node-selected'));
   }
 
-  var canvasGroup = svg.append('g');
-
-  canvasGroup.append('rect')
+  var passiveLayer = svg.append('g').attr('class', 'passive-layer');
+  var interactLayer = svg.append('g').attr('class', 'interact-layer');
+  interactLayer.append('rect')
           .attr('class', 'bg')
           .attr('width', width)
           .attr('height', height)
@@ -85,8 +87,8 @@ $(function() {
             }
           });
 
-  var nodeObjs = canvasGroup.selectAll('.node');
-  var linkObjs = canvasGroup.selectAll('.link');
+  var nodeObjs = interactLayer.append('g').selectAll('.node');
+  var linkObjs = passiveLayer.append('g').selectAll('.link');
 
   function update() {
     linkObjs = linkObjs.data(links);
@@ -209,7 +211,7 @@ $(function() {
   }
 
   d3.xml('img/erase.svg', 'image/svg+xml', function(xml) {
-    svg.each(function() {
+    interactLayer.each(function() {
       d3.select(this.appendChild(xml.documentElement))
               .attr('class', 'erase-btn')
               .attr('width', '40')
