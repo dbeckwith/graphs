@@ -175,7 +175,6 @@ $(function() {
       graphProps[name].value = val;
       $(this).prop('__raw-value__', val);
       console.log(val);
-      // TODO: change so that only sets value if shown, that way MathJax isn't calculating things that aren't shown
       if (graphProps[name].repr) {
         val = graphProps[name].repr(val);
       }
@@ -617,7 +616,7 @@ $(function() {
 
   _.each(graphProps, function(prop, name) {
     // TODO: make longDesc some kind of fancy popup, also so can show math and links
-    $('#graph-prop-table tbody').append('<tr prop-name="' + name + '"><td class="desc">' + prop.desc + (prop.longDesc ? ' <abbr title="' + prop.longDesc + '">(?)</abbr>' : '') + '</td><td class="math">' + (prop.math || '') + '</td><td class="value">' + (prop.defaultHidden ? '<span class="display-toggle">[show]</span><br>' : '') + '<span class="value"></span></td></tr>');
+    $('#graph-prop-table tbody').append('<tr prop-name="' + name + '"><td class="desc">' + prop.desc + (prop.longDesc ? ' <abbr title="' + prop.longDesc + '">(?)</abbr>' : '') + '</td><td class="math">' + (prop.math || '') + '</td><td class="value">' + (prop.defaultHidden ? '<span class="display-toggle">[show]</span><br>' : '') + '<span class="value' + (prop.defaultHidden ? ' tex2jax_ignore' : '') + '"></span></td></tr>');
   });
   $('#graph-prop-table tbody td .display-toggle ~ .value').hide();
   $('#graph-prop-table tbody td .display-toggle').click(function(event) {
@@ -625,9 +624,12 @@ $(function() {
     if ($(this).text() === '[show]') {
       $(this).text('[hide]');
       valueSpan.show(500);
+      valueSpan.removeClass('tex2jax_ignore');
+      updateTex();
     } else {
       $(this).text('[show]');
       valueSpan.hide(500);
+      valueSpan.addClass('tex2jax_ignore');
     }
   });
   _.each(commonGraphs, function(graph, name) {
