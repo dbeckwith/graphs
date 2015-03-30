@@ -8,47 +8,38 @@
     height: 500pt;
     border: 1px solid #ddd;
 }
-
 #canvas .node {
     fill: black;
 }
-
 #canvas .node-selected {
     fill: green;
 }
-
 #canvas .link {
     stroke: blue;
 }
-
 #canvas .bg {
     fill: none;
     pointer-events: all;
 }
-
 #canvas .erase-btn {
     pointer-events: all;
 }
 
+#graph-prop-table-container {
+    overflow-y: scroll;
+    height: 500pt;
+}
 #graph-prop-table tbody td.value .display-toggle {
     color: #400C78;
 }
-
 #graph-prop-table tbody td.value .display-toggle:hover {
     cursor:pointer;
     color:#8D55C9;
 }
-
 #graph-prop-table tbody td.value .value {
     font-weight: bold;
 }
 
-#common-graphs-table thead th:nth-child(1) {
-    width: 15%;
-}
-#common-graphs-table thead th:nth-child(2) {
-    width: 10%;
-}
 #common-graphs-table tbody td.inputs input[type="number"] {
     margin-left: 3pt;
     width: 50pt;
