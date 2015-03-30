@@ -449,8 +449,16 @@ $(function() {
           if (es.length === m * n)
             return Math.pow(m, n - 1) * Math.pow(n, m - 1);
         }
+        // TODO: broken for trees of order > 7?
         // TODO: not always exact, have to round, even then sometimes off (by a lot), maybe could do with fractions?
         return Math.floor(graphProps.laplMatr.value.cofactor(0, 0));
+      }
+    },
+    tree: {
+      desc: 'is a tree',
+      longDesc: 'Whether the graph is connected and has no cycles or not.',
+      calc: function(vs, es) {
+        return graphProps.connected.value && graphProps.size.value === graphProps.order.value - 1;
       }
     }
     // TODO: num cycles, is tree, diameter
