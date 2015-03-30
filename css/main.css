@@ -30,10 +30,11 @@
     height: 500pt;
 }
 #graph-prop-table tbody td.value .display-toggle {
+    cursor:pointer;
     color: #400C78;
+    transition: all linear 0.2s;
 }
 #graph-prop-table tbody td.value .display-toggle:hover {
-    cursor:pointer;
     color:#8D55C9;
 }
 #graph-prop-table tbody td.value .value {
