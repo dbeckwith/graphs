@@ -463,7 +463,7 @@ $(function() {
         return graphProps.connected.value && graphProps.size.value === graphProps.order.value - 1;
       }
     }
-    // TODO: num cycles, is tree, diameter
+    // TODO: num cycles, is tree, diameter, vertex and edge connectivity, non-separable
   };
 
   // TODO: show properties of selected vertex
