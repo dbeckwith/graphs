@@ -13,9 +13,7 @@ $(function() {
   width = $('#canvas').width();
   height = $('#canvas').height();
 
-  // TODO: add help button that scrolls to bottom and highlights help area for a second
-
-  // TODO: add button to enable forces (linkStrength 0.1, gravity 0.1, charge -300
+  // TODO: add button to enable forces (linkStrength 0.1, gravity 0.1, charge -300) or just remove force entirely
   var force = d3.layout.force()
           .size([width, height])
           .linkDistance(100)
@@ -119,6 +117,7 @@ $(function() {
         val = '\\(' + (val === Number.NEGATIVE_INFINITY ? '-' : '') + '\\infty\\)';
       }
       else {
+        // TODO: val.toString() can sometimes produce scientific notation, don't use commas then
         val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       }
       $(this).find('td .value').text(val);
@@ -220,6 +219,16 @@ $(function() {
             .selectAll('.toolbar-btn')
             .data([
               {
+                img: 'img/help.svg',
+                onclick: function() {
+                  $('#help').css({ 'background-color': 'hsla(240,100%,90%,0.9)' });
+                  $('body').scrollTo('#help', 500, function() {
+                    $('#help').animate({ 'background-color': 'hsla(240,100%,90%,0.0)' }, 500);
+                  });
+                },
+                title: 'Help'
+              },
+              {
                 img: 'img/erase.svg',
                 onclick: function() {
                   clear();
@@ -253,7 +262,7 @@ $(function() {
             .attr('fill-opacity', '0.0')
             .attr('stroke', 'black')
             .attr('stroke-width', '2')
-            .on('mouseover', function() {
+            .on('mouseover', function(d) {
               d3.select(this)
                       .transition()
                       .duration(100)
@@ -655,7 +664,9 @@ $(function() {
   };
 
   function isAdj(v1, v2) {
-    return graphProps.adjMatr.value.get(v1.vertNum, v2.vertNum) === 1;
+    return _.any(links, function(link) {
+      return (link.source === v1 && link.target === v2) || (link.source === v2 && link.target === v1);
+    });
   }
 
   _.each(graphProps, function(prop, name) {
