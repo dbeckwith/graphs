@@ -7,6 +7,7 @@ function updateTex() {
 
 $(function() {
   var width, height;
+  // TODO: move things when canvas resizes
 
   var svg = d3.select('#canvas');
 
@@ -574,6 +575,8 @@ $(function() {
           def: 5
         }
       },
+      verts: '\\(n\\)',
+      edges: '\\(\\frac{n\\left(n-1\\right)}2\\)',
       make: function(n) {
         var vs = _.range(n);
         var es = [];
@@ -594,6 +597,8 @@ $(function() {
           def: 5
         }
       },
+      verts: '\\(n\\)',
+      edges: '\\(n\\)',
       make: function(n) {
         var vs = _.range(n);
         var es = [];
@@ -612,6 +617,8 @@ $(function() {
           def: 4
         }
       },
+      verts: '\\(n\\)',
+      edges: '\\(n-1\\)',
       make: function(n) {
         var vs = _.range(n);
         var es = [];
@@ -634,6 +641,8 @@ $(function() {
           def: 3
         }
       },
+      verts: '\\(m+n\\)',
+      edges: '\\(mn\\)',
       make: function(m, n) {
         var vs = _.range(n + m);
         var es = [];
@@ -654,6 +663,8 @@ $(function() {
           def: 3
         }
       },
+      verts: '\\(2^n\\)',
+      edges: '\\(2^{n-1}n\\)',
       make: function(n) {
         n = 1 << n;
         var vs = _.range(n);
@@ -700,7 +711,7 @@ $(function() {
     }
   });
   _.each(commonGraphs, function(graph, name) {
-    $('#common-graphs-table tbody').append('<tr graph-name="' + name + '"><td class="desc">' + graph.desc + '</td><td class="math">' + (graph.math || '') + '</td><td class="inputs"></td></tr>');
+    $('#common-graphs-table tbody').append('<tr graph-name="' + name + '"><td class="desc">' + graph.desc + '</td><td class="math">' + (graph.math || '') + '</td><td>' + graph.verts + '</td><td>' + graph.edges + '</td><td class="inputs"></td></tr>');
   });
   $('#common-graphs-table tbody tr').each(function() {
     var graphName = $(this).attr('graph-name');
