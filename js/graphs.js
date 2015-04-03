@@ -90,6 +90,48 @@ $(function() {
   var nodeObjs = interactLayer.append('g').selectAll('.node');
   var linkObjs = passiveLayer.append('g').selectAll('.link');
 
+  function calcProps() {
+    $('#graph-prop-table tbody tr').each(function() {
+      var name = $(this).attr('prop-name');
+      console.log('updating prop ' + name);
+      var val = graphProps[name].calc(nodes, links);
+      graphProps[name].value = val;
+      $(this).prop('__raw-value__', val);
+      console.log(val);
+      if (graphProps[name].repr) {
+        val = graphProps[name].repr(val);
+      }
+      else if (val === undefined) {
+        val = '';
+      }
+      else if (val === null) {
+        val = '?';
+      }
+      else if (isNaN(val)) {
+        if (val instanceof Matrix) {
+          val = '\\(' + val.toLatex() + '\\)';
+        }
+        else {
+          val = '' + val;
+        }
+      }
+      else if (!isFinite(val)) {
+        val = '\\(' + (val === Number.NEGATIVE_INFINITY ? '-' : '') + '\\infty\\)';
+      }
+      else {
+        val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+      $(this).find('td .value').text(val);
+    });
+    $('#graph-prop-table tbody td .value').filter(function() {
+      return $(this).text() === 'true';
+    }).css({ 'color': '#0a0' });
+    $('#graph-prop-table tbody td .value').filter(function() {
+      return $(this).text() === 'false';
+    }).css({ 'color': '#a00' });
+    updateTex();
+  }
+
   function update() {
     linkObjs = linkObjs.data(links);
     linkObjs.enter()
@@ -168,45 +210,8 @@ $(function() {
 
     force.start();
 
-    $('#graph-prop-table tbody tr').each(function() {
-      var name = $(this).attr('prop-name');
-      console.log('updating prop ' + name);
-      var val = graphProps[name].calc(nodes, links);
-      graphProps[name].value = val;
-      $(this).prop('__raw-value__', val);
-      console.log(val);
-      if (graphProps[name].repr) {
-        val = graphProps[name].repr(val);
-      }
-      else if (val === undefined) {
-        val = '';
-      }
-      else if (val === null) {
-        val = '?';
-      }
-      else if (isNaN(val)) {
-        if (val instanceof Matrix) {
-          val = '\\(' + val.toLatex() + '\\)';
-        }
-        else {
-          val = '' + val;
-        }
-      }
-      else if (!isFinite(val)) {
-        val = '\\(' + (val === Number.NEGATIVE_INFINITY ? '-' : '') + '\\infty\\)';
-      }
-      else {
-        val = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-      }
-      $(this).find('td .value').text(val);
-    });
-    $('#graph-prop-table tbody td .value').filter(function() {
-      return $(this).text() === 'true';
-    }).css({ 'color': '#0a0' });
-    $('#graph-prop-table tbody td .value').filter(function() {
-      return $(this).text() === 'false';
-    }).css({ 'color': '#a00' });
-    updateTex();
+    if ($('#auto-calc-props-checkbox').prop('checked'))
+      calcProps();
   }
 
   {
@@ -219,14 +224,26 @@ $(function() {
                 onclick: function() {
                   clear();
                   update();
-                }
+                },
+                title: 'Clear'
+              },
+              {
+                img: 'img/calc.svg',
+                onclick: function() {
+                  calcProps();
+                },
+                title: 'Recalculate properties'
               }
             ])
             .enter()
             .append('g')
             .attr('class', 'toolbar-btn')
             .attr('transform', function(d, i) {
-              return  'translate(' + (5 + size * i) + ',5)';
+              return  'translate(' + (5 + (5 + size) * i) + ',5)';
+            });
+    btnGroup.append('title')
+            .text(function(d) {
+              return d.title;
             });
     btnGroup.append('circle')
             .attr('cx', size / 2)
@@ -650,13 +667,13 @@ $(function() {
     var valueSpan = $(this).siblings('.value');
     if ($(this).text() === '[show]') {
       $(this).text('[hide]');
-      valueSpan.show(500);
       valueSpan.removeClass('tex2jax_ignore');
       updateTex();
+      valueSpan.show(500);
     } else {
       $(this).text('[show]');
-      valueSpan.hide(500);
       valueSpan.addClass('tex2jax_ignore');
+      valueSpan.hide(500);
     }
   });
   _.each(commonGraphs, function(graph, name) {
