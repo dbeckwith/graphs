@@ -209,28 +209,55 @@ $(function() {
     updateTex();
   }
 
-  d3.xml('img/erase.svg', 'image/svg+xml', function(xml) {
-    interactLayer.each(function() {
-      d3.select(this.appendChild(xml.documentElement))
-              .attr('class', 'erase-btn')
-              .attr('width', '40')
-              .attr('height', '40')
-              .attr('x', '5')
-              .attr('y', '5')
-              .on('mouseover', function() {
-                d3.select(this).select('svg circle')
-                        .attr('fill', 'red');
-              })
-              .on('mouseout', function() {
-                d3.select(this).select('svg circle')
-                        .attr('fill', 'none');
-              })
-              .on('click', function() {
-                clear();
-                update();
-              });
-    });
-  });
+  {
+    var size = 40;
+    var btnGroup = interactLayer.append('g').attr('class', 'toolbar')
+            .selectAll('.toolbar-btn')
+            .data([
+              {
+                img: 'img/erase.svg',
+                onclick: function() {
+                  clear();
+                  update();
+                }
+              }
+            ])
+            .enter()
+            .append('g')
+            .attr('class', 'toolbar-btn')
+            .attr('transform', function(d, i) {
+              return  'translate(' + (5 + size * i) + ',5)';
+            });
+    btnGroup.append('circle')
+            .attr('cx', size / 2)
+            .attr('cy', size / 2)
+            .attr('r', size / 2)
+            .attr('fill', 'red')
+            .attr('fill-opacity', '0.0')
+            .attr('stroke', 'black')
+            .attr('stroke-width', '2')
+            .on('mouseover', function() {
+              d3.select(this)
+                      .transition()
+                      .duration(100)
+                      .attr('fill-opacity', '1.0');
+            })
+            .on('mouseout', function() {
+              d3.select(this)
+                      .transition()
+                      .duration(100)
+                      .attr('fill-opacity', '0.0');
+            })
+            .on('click', function(d, i) {
+              d.onclick.apply(this, [d, i]);
+            });
+    btnGroup.append('image')
+            .attr('xlink:href', function(d) {
+              return d.img;
+            })
+            .attr('width', size)
+            .attr('height', size);
+  }
 
   var graphProps = {
     order: {
@@ -463,7 +490,7 @@ $(function() {
         return graphProps.connected.value && graphProps.size.value === graphProps.order.value - 1;
       }
     }
-    // TODO: num cycles, is tree, diameter, vertex and edge connectivity, non-separable
+    // TODO: num cycles, is tree, diameter, vertex and edge connectivity, non-separable, girth, Eulerian
   };
 
   // TODO: show properties of selected vertex

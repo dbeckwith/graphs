@@ -21,8 +21,11 @@
     fill: none;
     pointer-events: all;
 }
-#canvas .erase-btn {
+#canvas .toolbar-btn circle {
     pointer-events: all;
+}
+#canvas .toolbar-btn image {
+    pointer-events: none;
 }
 
 #graph-prop-table-container {
@@ -30,7 +33,7 @@
     height: 500pt;
 }
 #graph-prop-table tbody td.value .display-toggle {
-    cursor:pointer;
+    cursor: pointer;
     color: #400C78;
     transition: all linear 0.2s;
 }
