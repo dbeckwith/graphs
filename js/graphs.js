@@ -13,14 +13,13 @@ $(function() {
   width = $('#canvas').width();
   height = $('#canvas').height();
 
-  // TODO: add button to enable forces (linkStrength 0.1, gravity 0.1, charge -300) or just remove force entirely
-  var force = d3.layout.force()
-          .size([width, height])
-          .linkDistance(100)
-          .linkStrength(0)
-          .gravity(0)
-          .charge(0)
-          .on('tick', function() {
+  var nodes = [];
+  var links = [];
+
+  var drag = d3.behavior.drag()
+          .on('drag', function(d) {
+            d.x = d3.event.x;
+            d.y = d3.event.y;
             linkObjs
                     .attr('x1', function(d) {
                       return d.source.x;
@@ -42,11 +41,6 @@ $(function() {
                       return d.y;
                     });
           });
-
-  var nodes = force.nodes();
-  var links = force.links();
-
-  var drag = force.drag();
 
   function selectNode(node) {
     node.classed('node-selected', true)
@@ -140,6 +134,19 @@ $(function() {
             .transition()
             .duration(200)
             .attr('opacity', 1);
+    linkObjs
+            .attr('x1', function(d) {
+              return d.source.x;
+            })
+            .attr('y1', function(d) {
+              return d.source.y;
+            })
+            .attr('x2', function(d) {
+              return d.target.x;
+            })
+            .attr('y2', function(d) {
+              return d.target.y;
+            });
     linkObjs.exit()
             .transition()
             .duration(200)
@@ -201,13 +208,18 @@ $(function() {
             .transition()
             .duration(200)
             .attr('r', 8);
+    nodeObjs
+            .attr('cx', function(d) {
+              return d.x;
+            })
+            .attr('cy', function(d) {
+              return d.y;
+            });
     nodeObjs.exit()
             .transition()
             .duration(200)
             .attr('r', 0)
             .remove();
-
-    force.start();
 
     if ($('#auto-calc-props-checkbox').prop('checked'))
       calcProps();

@@ -11,6 +11,9 @@
 #canvas .node {
     fill: black;
 }
+#canvas .node:hover {
+    fill: blue;
+}
 #canvas .node-selected {
     fill: green;
 }
