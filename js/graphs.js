@@ -436,6 +436,7 @@ $(function() {
 
   // sets the given node as selected
   function selectNode(node) {
+    console.log('select');
     node.classed('node-selected', true)
             .transition()
             .duration(300)
@@ -443,11 +444,66 @@ $(function() {
   }
 
   // sets the given node as deselected
-  function deselectNode(node) {
-    node.classed('node-selected', false)
+  function deselectNode() {
+    console.log('deselect');
+    svg.selectAll('.node-selected')
+            .classed('node-selected', false)
             .transition()
             .duration(100)
             .attr('r', 8);
+  }
+
+  function hasSelection() {
+    return !svg.selectAll('.node-selected').empty();
+  }
+
+  function addNode(node) {
+    console.log('add node');
+    nodes.push(node);
+    linkNodes(node);
+  }
+
+  function linkNodes(node) {
+    var selected = d3.selectAll('.node-selected');
+    if (!selected.empty()) {
+      var a = node, b = selected.datum();
+      deselectNode();
+      if (a !== b) {
+        if (!isAdj(a, b)) {
+          console.log('link');
+          links.push({ source: b, target: a, edgeNum: links.length });
+        }
+        else {
+          console.log('unlink');
+          links = _.filter(links, function(link) {
+            return !((link.source === a && link.target === b) || (link.source === b && link.target === a));
+          });
+          links.forEach(function(link, i) {
+            link.edgeNum = i;
+          });
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function removeNode(node) {
+    console.log('remove');
+    var selected = d3.selectAll('.node-selected');
+    var a = node, b = selected.empty() ? null : selected.datum();
+    if (a === b)
+      deselectNode();
+    nodes.splice(nodes.indexOf(a), 1);
+    nodes.forEach(function(node, i) {
+      node.vertNum = i;
+    });
+    links = _.filter(links, function(link) {
+      return !(link.source === a || link.target === a);
+    });
+    links.forEach(function(link, i) {
+      link.edgeNum = i;
+    });
   }
 
   // clears all data
@@ -465,13 +521,12 @@ $(function() {
           .attr('width', width)
           .attr('height', height)
           .on('click', function() {
-            var selected = svg.selectAll('.node-selected');
-            if (selected.empty()) {
+            if (svg.selectAll('.node-selected').empty()) {
               var m = d3.mouse(this);
-              nodes.push({ x: m[0], y: m[1], vertNum: nodes.length });
+              addNode({ x: m[0], y: m[1], vertNum: nodes.length });
               update();
             } else {
-              deselectNode(selected);
+              deselectNode();
             }
           });
 
@@ -558,46 +613,17 @@ $(function() {
               if (d3.event.defaultPrevented)
                 return;
               console.log('clicked');
-              var selected = svg.selectAll('.node-selected');
-              var a = d3.select(this).datum(), b = selected.empty() ? null : selected.datum();
+              var a = d3.select(this).datum();
               if (d3.event.ctrlKey) {
-                console.log('remove');
-                if (!selected.empty() && a === b)
-                  deselectNode(selected);
-                nodes.splice(nodes.indexOf(a), 1);
-                nodes.forEach(function(node, i) {
-                  node.vertNum = i;
-                });
-                links = _.filter(links, function(link) {
-                  return !(link.source === a || link.target === a);
-                });
-                links.forEach(function(link, i) {
-                  link.edgeNum = i;
-                });
+                removeNode(a);
                 update();
               }
               else {
-                if (!selected.empty()) {
-                  deselectNode(selected);
-                  var adj = isAdj(a, b);
-                  if (a !== b) {
-                    if (!adj) {
-                      console.log('link');
-                      links.push({ source: selected.datum(), target: d3.select(this).datum(), edgeNum: links.length });
-                    }
-                    else {
-                      console.log('unlink');
-                      links = _.filter(links, function(link) {
-                        return !((link.source === a && link.target === b) || (link.source === b && link.target === a));
-                      });
-                    }
-                    update();
-                  }
-                }
-                if (selected.empty() || d3.event.shiftKey) {
-                  console.log('select');
+                var linked = linkNodes(a);
+                if (linked)
+                  update();
+                if (!linked || d3.event.shiftKey)
                   selectNode(d3.select(this));
-                }
               }
             })
             .transition()
