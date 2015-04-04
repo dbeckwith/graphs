@@ -287,12 +287,12 @@ $(function() {
         return { x: r * Math.cos(t), y: r * Math.sin(t) };
       };
     },
-    multiRadial: function(n, counts) {
+    multiRadial: function(n, counts, shifts) {
       var scale = d3.scale.linear().domain([0, counts.length - 1]).range([0, 100]);
       var coords = _.reduce(_.map(counts, function(count, i) {
         var coords = [];
         for (var j = 0; j < count; j++)
-          coords.push({ r: scale(i), t: j * 2 * Math.PI / count + (count % 2 === 0 ? Math.PI / count : 0) });
+          coords.push({ r: scale(i), t: j * 2 * Math.PI / count + (count % 2 === 0 ? Math.PI / count : 0) + (shifts ? shifts[i] : 0) });
         return coords;
       }), function(all, coords) {
         return all.concat(coords);
@@ -421,6 +421,11 @@ $(function() {
       make: function(n) {
         n = 1 << n;
         var vs = _.range(n);
+        for (var i = 2; i < n; i += 4) {
+          var temp = vs[i];
+          vs[i] = vs[i + 1];
+          vs[i + 1] = temp;
+        }
         var es = [];
         for (var i = 0; i < n; i++) {
           for (var j = i + 1; j < n; j++) {
@@ -434,6 +439,19 @@ $(function() {
               es.push([i, j]);
           }
         }
+//        var layout = null;
+//        if (n <= 4) {
+//          layout = graphLayouts.radial(n);
+//        }
+//        else {
+//          var counts = [0];
+//          var shifts = [0];
+//          for (var i = 0; i < n / 4; i++) {
+//            counts.push(4);
+//            shifts.push(Math.PI / 4 * i);
+//          }
+//          layout = graphLayouts.multiRadial(n, counts, shifts);
+//        }
         return { vs: vs, es: es, layout: graphLayouts.radial(n) };
       }
     },
