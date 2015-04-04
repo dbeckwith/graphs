@@ -237,8 +237,33 @@ $(function() {
       calc: function(vs, es) {
         return graphProps.connected.value && graphProps.size.value === graphProps.order.value - 1;
       }
+    },
+    eulerian: {
+      desc: 'is Eulerian',
+      longDesc: 'Whether the graph contains a circuit which visits every edge or not.',
+      calc: function(vs, es) {
+        return graphProps.connected.value && ((graphProps.regular.value && graphProps.minDeg.value % 2 === 0) || _.every(graphProps.degSeq.value, function(deg) {
+          return deg.deg % 2 === 0;
+        }));
+      }
+    },
+    semiEulerian: {
+      desc: 'is semi-Eulerian',
+      longDesc: 'Whether the graph contains a trail which visits every edge or not.',
+      calc: function(vs, es) {
+        if (graphProps.eulerian.value)
+          return true;
+        var oddCount = 0;
+        return _.every(graphProps.degSeq.value, function(deg) {
+          if (deg.deg % 2 === 1)
+            oddCount++;
+          if (oddCount > 2)
+            return false;
+          return true;
+        }) && oddCount === 2;
+      }
     }
-    // TODO: num cycles, is tree, diameter, vertex and edge connectivity, non-separable, girth, Eulerian
+    // TODO: num cycles, is tree, diameter, vertex and edge connectivity, non-separable, girth, Hamiltonian
   };
 
   // TODO: show properties of selected vertex
@@ -266,9 +291,9 @@ $(function() {
       return function(v) {
         var sep = 100;
         if (v < topCount)
-          return { x: v / (topCount - 1) * 2 * sep - sep, y: -sep };
+          return { x: topCount === 1 ? 0 : v / (topCount - 1) * 2 * sep - sep, y: -sep };
         else
-          return { x: (v - topCount) / (n - topCount - 1) * 2 * sep - sep, y: sep };
+          return { x: n - topCount === 1 ? 0 : (v - topCount) / (n - topCount - 1) * 2 * sep - sep, y: sep };
       };
     }
   };
@@ -482,10 +507,8 @@ $(function() {
             link.edgeNum = i;
           });
         }
-        return true;
       }
     }
-    return false;
   }
 
   function removeNode(node) {
@@ -619,10 +642,10 @@ $(function() {
                 update();
               }
               else {
-                var linked = linkNodes(a);
-                if (linked)
-                  update();
-                if (!linked || d3.event.shiftKey)
+                var hadSelection = hasSelection();
+                linkNodes(a);
+                update();
+                if (!hadSelection || d3.event.shiftKey)
                   selectNode(d3.select(this));
               }
             })
