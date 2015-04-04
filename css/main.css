@@ -39,9 +39,10 @@
     cursor: pointer;
     color: #400C78;
     transition: all linear 0.2s;
+    display: block;
 }
 #graph-prop-table tbody td.value .display-toggle:hover {
-    color:#8D55C9;
+    color: #8D55C9;
 }
 #graph-prop-table tbody td.value .value {
     font-weight: bold;
