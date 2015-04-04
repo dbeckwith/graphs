@@ -281,15 +281,31 @@ $(function() {
 
   var graphLayouts = {
     radial: function(n) {
+      var r = 100;
       return function(v) {
-        var r = 100;
-        var t = v * 2 * Math.PI / n - Math.PI / 2;
+        var t = v * 2 * Math.PI / n - Math.PI / 2 + (n % 2 === 0 ? Math.PI / n : 0);
         return { x: r * Math.cos(t), y: r * Math.sin(t) };
       };
     },
-    horizLines: function(n, topCount) {
+    multiRadial: function(n, counts) {
+      var scale = d3.scale.linear().domain([0, counts.length - 1]).range([0, 100]);
+      var coords = _.reduce(_.map(counts, function(count, i) {
+        var coords = [];
+        for (var j = 0; j < count; j++)
+          coords.push({ r: scale(i), t: j * 2 * Math.PI / count + (count % 2 === 0 ? Math.PI / count : 0) });
+        return coords;
+      }), function(all, coords) {
+        return all.concat(coords);
+      });
+      if (coords.length !== n)
+        throw new Error('counts do not add up to number of vertices');
       return function(v) {
-        var sep = 100;
+        return { x: coords[v].r * Math.cos(coords[v].t), y: coords[v].r * Math.sin(coords[v].t) };
+      };
+    },
+    horizLines: function(n, topCount) {
+      var sep = 100;
+      return function(v) {
         if (v < topCount)
           return { x: topCount === 1 ? 0 : v / (topCount - 1) * 2 * sep - sep, y: -sep };
         else
@@ -336,9 +352,12 @@ $(function() {
       make: function(n) {
         var vs = _.range(n);
         var es = [];
-        for (var i = 0; i < n; i++) {
-          es.push([i, i + 1 >= n ? 0 : i + 1]);
-        }
+        if (n === 2)
+          es.push([0, 1]);
+        if (n > 2)
+          for (var i = 0; i < n; i++) {
+            es.push([i, i + 1 >= n ? 0 : i + 1]);
+          }
         return { vs: vs, es: es, layout: graphLayouts.radial(n) };
       }
     },
@@ -348,7 +367,7 @@ $(function() {
       args: {
         'n': {
           min: 1,
-          def: 4
+          def: 5
         }
       },
       verts: '\\(n\\)',
@@ -416,6 +435,75 @@ $(function() {
           }
         }
         return { vs: vs, es: es, layout: graphLayouts.radial(n) };
+      }
+    },
+    star: {
+      desc: 'star graph',
+      math: '\\(S_n\\)',
+      args: {
+        'n': {
+          min: 1,
+          def: 6
+        }
+      },
+      verts: '\\(n\\)',
+      edges: '\\(n-1\\)',
+      make: function(n) {
+        var vs = _.range(n);
+        var es = [];
+        for (var i = 1; i < n; i++) {
+          es.push([0, i]);
+        }
+        return { vs: vs, es: es, layout: graphLayouts.multiRadial(n, [1, n - 1]) };
+      }
+    },
+    wheel: {
+      desc: 'wheel graph',
+      math: '\\(W_n\\)',
+      args: {
+        'n': {
+          min: 1,
+          def: 6
+        }
+      },
+      verts: '\\(n\\)',
+      edges: '\\(2\\left(n-1\\right)\\)',
+      make: function(n) {
+        var vs = _.range(n);
+        var es = [];
+        for (var i = 1; i < n; i++) {
+          es.push([0, i]);
+        }
+        if (i > 2)
+          for (var i = 1; i < n; i++) {
+            es.push([i, i + 1 >= n ? 1 : i + 1]);
+          }
+        return { vs: vs, es: es, layout: n === 3 ? graphLayouts.radial(n) : graphLayouts.multiRadial(n, [1, n - 1]) };
+      }
+    },
+    friendship: {
+      desc: 'friendship graph',
+      math: '\\(F_n\\)',
+      args: {
+        'n': {
+          min: 0,
+          def: 3
+        }
+      },
+      verts: '\\(2n+1\\)',
+      edges: '\\(2n\\)',
+      make: function(n) {
+        var vs = [0];
+        var es = [];
+        for (var i = 0; i < n; i++) {
+          var a, b;
+          vs.push(a = vs.length);
+          vs.push(b = vs.length);
+          es.push([0, a]);
+          es.push([0, b]);
+          es.push([a, b]);
+        }
+        return { vs: vs, es: es, layout: n === 1 ? graphLayouts.radial(2 * n + 1) : graphLayouts.multiRadial(2 * n + 1, [1, 2 * n + 1 - 1]) };
       }
     }
   };
@@ -531,6 +619,7 @@ $(function() {
 
   // clears all data
   function clear() {
+    console.log('clear');
     nodes.splice(0, nodes.length);
     links.splice(0, links.length);
     deselectNode(svg.selectAll('.node-selected'));
