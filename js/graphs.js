@@ -319,7 +319,7 @@ $(function() {
       desc: 'complete graph',
       math: '\\(K_n\\)',
       args: {
-        'n': {
+        n: {
           min: 1,
           max: Number.POSITIVE_INFINITY,
           def: 5
@@ -342,7 +342,7 @@ $(function() {
       desc: 'cycle graph',
       math: '\\(C_n\\)',
       args: {
-        'n': {
+        n: {
           min: 1,
           def: 5
         }
@@ -365,7 +365,7 @@ $(function() {
       desc: 'path graph',
       math: '\\(P_n\\)',
       args: {
-        'n': {
+        n: {
           min: 1,
           def: 5
         }
@@ -385,11 +385,11 @@ $(function() {
       desc: 'complete bipartite graph',
       math: '\\(K_{m,n}\\)',
       args: {
-        'm': {
+        m: {
           min: 1,
           def: 4
         },
-        'n': {
+        n: {
           min: 1,
           def: 3
         }
@@ -411,7 +411,7 @@ $(function() {
       desc: 'hypercube graph',
       math: '\\(Q_n\\)',
       args: {
-        'n': {
+        n: {
           min: 0,
           def: 3
         }
@@ -459,7 +459,7 @@ $(function() {
       desc: 'star graph',
       math: '\\(S_n\\)',
       args: {
-        'n': {
+        n: {
           min: 1,
           def: 6
         }
@@ -479,7 +479,7 @@ $(function() {
       desc: 'wheel graph',
       math: '\\(W_n\\)',
       args: {
-        'n': {
+        n: {
           min: 1,
           def: 6
         }
@@ -503,7 +503,7 @@ $(function() {
       desc: 'friendship graph',
       math: '\\(F_n\\)',
       args: {
-        'n': {
+        n: {
           min: 0,
           def: 3
         }
@@ -528,7 +528,7 @@ $(function() {
 
   var staticGraphs = {
     peterson: {
-      desc: "Peterson graph",
+      desc: 'Peterson graph',
       verts: 10,
       edges: [
         [0, 2],
@@ -548,12 +548,40 @@ $(function() {
         [9, 5]
       ],
       layout: {
-        name: "multiRadial",
+        name: 'multiRadial',
         args: [10, [0, 5, 5]]
       }
     },
+    durer: {
+      desc: 'Dürer graph',
+      verts: 12,
+      edges: [
+        [0, 2],
+        [0, 4],
+        [0, 6],
+        [1, 3],
+        [1, 5],
+        [1, 7],
+        [2, 4],
+        [2, 8],
+        [3, 5],
+        [3, 9],
+        [4, 10],
+        [5, 11],
+        [6, 7],
+        [7, 8],
+        [8, 9],
+        [9, 10],
+        [10, 11],
+        [11, 6]
+      ],
+      layout: {
+        name: 'multiRadial',
+        args: [12, [0, 6, 6]]
+      }
+    },
     kantor: {
-      desc: "Möbius-Kantor graph",
+      desc: 'Möbius-Kantor graph',
       verts: 16,
       edges: [
         [0, 3],
@@ -582,8 +610,48 @@ $(function() {
         [15, 8]
       ],
       layout: {
-        name: "multiRadial",
+        name: 'multiRadial',
         args: [16, [0, 8, 8]]
+      }
+    },
+    dodecahedron: {
+      desc: 'dodecahedron Schlegel diagram',
+      verts: 20,
+      edges: [
+        [0, 1],
+        [0, 4],
+        [0, 5],
+        [1, 2],
+        [1, 6],
+        [2, 3],
+        [2, 7],
+        [3, 4],
+        [3, 8],
+        [4, 9],
+        [5, 10],
+        [5, 14],
+        [6, 10],
+        [6, 11],
+        [7, 11],
+        [7, 12],
+        [8, 12],
+        [8, 13],
+        [9, 13],
+        [9, 14],
+        [10, 15],
+        [11, 16],
+        [12, 17],
+        [13, 18],
+        [14, 19],
+        [15, 16],
+        [16, 17],
+        [17, 18],
+        [18, 19],
+        [19, 15]
+      ],
+      layout: {
+        name: 'multiRadial',
+        args: [20, [0, 5, 5, 5, 5], [0, -Math.PI / 5, -Math.PI / 5, 0, 0]]
       }
     }
   };
