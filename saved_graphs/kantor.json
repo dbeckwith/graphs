@@ -1,5 +1,5 @@
 {
-    "name": "Möbius-Kantor Kantor Graph",
+    "name": "Möbius-Kantor Graph",
     "vertices": 16,
     "edges": [
         [0, 3],
