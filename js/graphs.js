@@ -292,7 +292,7 @@ $(function() {
       var coords = _.reduce(_.map(counts, function(count, i) {
         var coords = [];
         for (var j = 0; j < count; j++)
-          coords.push({ r: scale(i), t: j * 2 * Math.PI / count + (count % 2 === 0 ? Math.PI / count : 0) + (shifts ? shifts[i] : 0) });
+          coords.push({ r: scale(i), t: j * 2 * Math.PI / count - Math.PI / 2 + (count % 2 === 0 ? Math.PI / count : 0) + (shifts ? shifts[i] : 0) });
         return coords;
       }), function(all, coords) {
         return all.concat(coords);
