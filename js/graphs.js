@@ -210,27 +210,27 @@ $(function() {
         return value.bipartite;
       }
     },
-    spanningTrees: {
-      desc: 'number of spanning trees',
-      longDesc: 'The number of trees that contain all vertices of the graph and whose only edges are edges of the graph. A tree is a graph without any cycles.',
-      calc: function(vs, es) {
-        if (!graphProps.connected.value)
-          return 0;
-        if (vs.length === 1)
-          return 1;
-        if (es.length === vs.length * (vs.length - 1) / 2)
-          return Math.pow(vs.length, vs.length - 2);
-        if (graphProps.bipartite.value.bipartite) {
-          var m = graphProps.bipartite.value.m;
-          var n = graphProps.bipartite.value.n;
-          if (es.length === m * n)
-            return Math.pow(m, n - 1) * Math.pow(n, m - 1);
-        }
-        // TODO: broken for trees of order > 7?
-        // TODO: not always exact, have to round, even then sometimes off (by a lot), maybe could do with fractions?
-        return Math.floor(graphProps.laplMatr.value.cofactor(0, 0));
-      }
-    },
+//    spanningTrees: {
+//      desc: 'number of spanning trees',
+//      longDesc: 'The number of trees that contain all vertices of the graph and whose only edges are edges of the graph. A tree is a graph without any cycles.',
+//      calc: function(vs, es) {
+//        if (!graphProps.connected.value)
+//          return 0;
+//        if (vs.length === 1)
+//          return 1;
+//        if (es.length === vs.length * (vs.length - 1) / 2)
+//          return Math.pow(vs.length, vs.length - 2);
+//        if (graphProps.bipartite.value.bipartite) {
+//          var m = graphProps.bipartite.value.m;
+//          var n = graphProps.bipartite.value.n;
+//          if (es.length === m * n)
+//            return Math.pow(m, n - 1) * Math.pow(n, m - 1);
+//        }
+//        // TODO: broken for trees of order > 7?
+//        // TODO: not always exact, have to round, even then sometimes off (by a lot), maybe could do with fractions?
+//        return Math.floor(graphProps.laplMatr.value.cofactor(0, 0));
+//      }
+//    },
     tree: {
       desc: 'is a tree',
       longDesc: 'Whether the graph is connected and has no cycles or not.',
