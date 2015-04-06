@@ -288,7 +288,7 @@ $(function() {
       };
     },
     multiRadial: function(n, counts, shifts) {
-      var scale = d3.scale.linear().domain([0, counts.length - 1]).range([0, 100]);
+      var scale = d3.scale.linear().domain([0, 2]).range([0, 100]);
       var coords = _.reduce(_.map(counts, function(count, i) {
         var coords = [];
         for (var j = 0; j < count; j++)
@@ -472,7 +472,7 @@ $(function() {
         for (var i = 1; i < n; i++) {
           es.push([0, i]);
         }
-        return { vs: vs, es: es, layout: graphLayouts.multiRadial(n, [1, n - 1]) };
+        return { vs: vs, es: es, layout: graphLayouts.multiRadial(n, [1, 0, n - 1]) };
       }
     },
     wheel: {
@@ -496,7 +496,7 @@ $(function() {
           for (var i = 1; i < n; i++) {
             es.push([i, i + 1 >= n ? 1 : i + 1]);
           }
-        return { vs: vs, es: es, layout: n === 3 ? graphLayouts.radial(n) : graphLayouts.multiRadial(n, [1, n - 1]) };
+        return { vs: vs, es: es, layout: n === 3 ? graphLayouts.radial(n) : graphLayouts.multiRadial(n, [1, 0, n - 1]) };
       }
     },
     friendship: {
@@ -521,7 +521,7 @@ $(function() {
           es.push([0, b]);
           es.push([a, b]);
         }
-        return { vs: vs, es: es, layout: n === 1 ? graphLayouts.radial(2 * n + 1) : graphLayouts.multiRadial(2 * n + 1, [1, 2 * n + 1 - 1]) };
+        return { vs: vs, es: es, layout: n === 1 ? graphLayouts.radial(2 * n + 1) : graphLayouts.multiRadial(2 * n + 1, [1, 0, 2 * n + 1 - 1]) };
       }
     }
   };
@@ -1112,7 +1112,6 @@ $(function() {
               var g = graph.make.apply(null, args);
               console.log(g.vs.length + ' verts: ' + JSON.stringify(g.vs));
               console.log(g.es.length + ' edges: ' + JSON.stringify(g.es));
-              console.log(g.layout);
               clear();
               g.vs.forEach(function(v) {
                 var pos = g.layout(v);
