@@ -250,23 +250,11 @@ $(function() {
         return graphProps.connected.value && graphProps.size.value === graphProps.order.value - 1;
       }
     },
-    eulerian: {
-      desc: 'is Eulerian',
-      longDesc: 'Whether the graph contains a circuit which visits every edge or not.',
-      link: 'http://en.wikipedia.org/wiki/Eulerian_path',
-      calc: function(vs, es) {
-        return graphProps.connected.value && ((graphProps.regular.value && graphProps.minDeg.value % 2 === 0) || _.every(graphProps.degSeq.value, function(deg) {
-          return deg.deg % 2 === 0;
-        }));
-      }
-    },
     semiEulerian: {
       desc: 'is semi-Eulerian',
-      longDesc: 'Whether the graph contains a trail which visits every edge or not.',
+      longDesc: 'Whether the graph contains a walk which visits every edge exactly once or not.',
       link: 'http://en.wikipedia.org/wiki/Eulerian_path',
       calc: function(vs, es) {
-        if (graphProps.eulerian.value)
-          return true;
         if (!graphProps.connected.value)
           return false;
         var oddCount = 0;
@@ -276,7 +264,17 @@ $(function() {
           if (oddCount > 2)
             return false;
           return true;
-        }) && oddCount === 2;
+        }) && (oddCount === 2 || oddCount === 0);
+      }
+    },
+    eulerian: {
+      desc: 'is Eulerian',
+      longDesc: 'Whether the graph contains a walk which visits every edge exactly once and returns to its origin or not.',
+      link: 'http://en.wikipedia.org/wiki/Eulerian_path',
+      calc: function(vs, es) {
+        return graphProps.connected.value && ((graphProps.regular.value && graphProps.minDeg.value % 2 === 0) || _.every(graphProps.degSeq.value, function(deg) {
+          return deg.deg % 2 === 0;
+        }));
       }
     }
     // TODO: num cycles, diameter, vertex and edge connectivity, non-separable, girth, Hamiltonian, chromatic number and index, circuit rank,clique number, characteristic polynomial, chromatic polynomial, is perfect, is planar
