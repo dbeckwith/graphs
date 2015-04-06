@@ -304,6 +304,10 @@ $(function() {
   var graphLayouts = {
     radial: function(n) {
       var r = 100;
+      if (n === 1)
+        return function(v) {
+          return { x: 0, y: 0 };
+        };
       return function(v) {
         var t = v * 2 * Math.PI / n - Math.PI / 2 + (n % 2 === 0 ? Math.PI / n : 0);
         return { x: r * Math.cos(t), y: r * Math.sin(t) };
@@ -458,19 +462,15 @@ $(function() {
       verts: '\\(2^n\\)',
       edges: '\\(2^{n-1}n\\)',
       make: function(n) {
+        var nn = n;
         n = 1 << n;
         var vs = _.range(n);
-        for (var i = 2; i < n; i += 4) {
-          var temp = vs[i];
-          vs[i] = vs[i + 1];
-          vs[i + 1] = temp;
-        }
         var es = [];
         for (var i = 0; i < n; i++) {
           for (var j = i + 1; j < n; j++) {
             var dist = 0;
-            var val = i ^ j;
-            while (val !== 0 && dist < 2) {
+            var val = i ^ j; // get bit difference between the numbers
+            while (val !== 0 && dist < 2) { // count number of 1s
               dist++;
               val &= val - 1;
             }
@@ -478,11 +478,20 @@ $(function() {
               es.push([i, j]);
           }
         }
-//        var layout = null;
-//        if (n <= 4) {
-//          layout = graphLayouts.radial(n);
-//        }
-//        else {
+        var layout = null;
+        if (nn <= 3)
+          for (var i = 2; i < n; i += 4) {
+            var temp = vs[i];
+            vs[i] = vs[i + 1];
+            vs[i + 1] = temp;
+          }
+        if (nn <= 2) {
+          layout = graphLayouts.radial(n);
+        }
+        else if (nn === 3) {
+          layout = graphLayouts.multiRadial(n, [0, 4, 4]);
+        }
+        else {
 //          var counts = [0];
 //          var shifts = [0];
 //          for (var i = 0; i < n / 4; i++) {
@@ -490,8 +499,9 @@ $(function() {
 //            shifts.push(Math.PI / 4 * i);
 //          }
 //          layout = graphLayouts.multiRadial(n, counts, shifts);
-//        }
-        return { vs: vs, es: es, layout: graphLayouts.radial(n) };
+          layout = graphLayouts.radial(n);
+        }
+        return { vs: vs, es: es, layout: layout };
       }
     },
     star: {
