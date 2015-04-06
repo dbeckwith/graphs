@@ -1127,6 +1127,13 @@ $(function() {
           });
 
   update();
+
+//  $('#file-load-input').change(function() {
+//    var file = $(this)[0].files[0];
+//    console.log(JSON.stringify(file));
+//    if (file.type !== 'application/json')
+//      return false;
+//  });
 });
 
 $(document).on('click', 'a', function(event) {
