@@ -6,7 +6,6 @@ function updateTex() {
 }
 
 $(function() {
-
   var graphProps = {
     order: {
       desc: 'order',
@@ -280,10 +279,10 @@ $(function() {
         }) && oddCount === 2;
       }
     }
-    // TODO: num cycles, is tree, diameter, vertex and edge connectivity, non-separable, girth, Hamiltonian, chromatic number
+    // TODO: num cycles, diameter, vertex and edge connectivity, non-separable, girth, Hamiltonian, chromatic number and index, circuit rank,clique number, characteristic polynomial, chromatic polynomial, is perfect, is planar
   };
 
-  // TODO: show properties of selected vertex
+  // TODO: show properties of selected vertex (also is bridge vertex), maybe not worth showing
   var vertProps = {
     deg: {
       desc: 'degree',
@@ -689,6 +688,7 @@ $(function() {
 
   var width, height;
   // TODO: move things when canvas resizes
+  // TODO: consider canvas height more carefully, maybe should fill view vertically
 
   var svg = d3.select('#canvas');
 
