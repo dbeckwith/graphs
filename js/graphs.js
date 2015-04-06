@@ -340,10 +340,11 @@ $(function() {
     }
   };
 
-  // TODO: have long descriptions and links for common graphs
   var commonGraphs = {
     complete: {
       desc: 'complete graph',
+      longDesc: 'The graph with n vertices that contains all possible edges.',
+      link: 'http://en.wikipedia.org/wiki/Complete_graph',
       math: '\\(K_n\\)',
       args: {
         n: {
@@ -367,6 +368,8 @@ $(function() {
     },
     empty: {
       desc: 'empty graph',
+      longDesc: 'The graph with n vertices that contains no edges.',
+      link: 'http://en.wikipedia.org/wiki/Null_graph#Edgeless_graph',
       math: '\\(\\overline K_n\\)',
       args: {
         n: {
@@ -383,6 +386,8 @@ $(function() {
     },
     cycle: {
       desc: 'cycle graph',
+      longDesc: 'The graph with n vertices that consists of a single cycle.',
+      link: 'http://en.wikipedia.org/wiki/Cycle_graph',
       math: '\\(C_n\\)',
       args: {
         n: {
@@ -406,6 +411,8 @@ $(function() {
     },
     path: {
       desc: 'path graph',
+      longDesc: 'The graph with n vertices that consists of a single path.',
+      link: 'http://en.wikipedia.org/wiki/Path_graph',
       math: '\\(P_n\\)',
       args: {
         n: {
@@ -426,6 +433,8 @@ $(function() {
     },
     completeBipartite: {
       desc: 'complete bipartite graph',
+      longDesc: 'The bipartite graph with m vertices in one vertex partition and n in the other that has all possible edges between the two partitions.',
+      link: 'http://en.wikipedia.org/wiki/Complete_bipartite_graph',
       math: '\\(K_{m,n}\\)',
       args: {
         m: {
@@ -452,6 +461,8 @@ $(function() {
     },
     hypercube: {
       desc: 'hypercube graph',
+      longDesc: 'The graph that is a skeleton of an n-dimensional cube.',
+      link: 'http://en.wikipedia.org/wiki/Hypercube_graph',
       math: '\\(Q_n\\)',
       args: {
         n: {
@@ -506,6 +517,8 @@ $(function() {
     },
     star: {
       desc: 'star graph',
+      longDesc: 'The graph with n vertices that has n-1 vertices connected to a single center vertex.',
+      link: 'http://en.wikipedia.org/wiki/Star_(graph_theory)',
       math: '\\(S_n\\)',
       args: {
         n: {
@@ -526,6 +539,8 @@ $(function() {
     },
     wheel: {
       desc: 'wheel graph',
+      longDesc: 'The graph with n vertices that has n-1 vertices connected in a cycle and to a single center vertex.',
+      link: 'http://en.wikipedia.org/wiki/Wheel_graph',
       math: '\\(W_n\\)',
       args: {
         n: {
@@ -550,6 +565,8 @@ $(function() {
     },
     friendship: {
       desc: 'friendship graph',
+      longDesc: 'The graph with n 3-cycles sharing only a single common vertex.',
+      link: 'http://en.wikipedia.org/wiki/Friendship_graph',
       math: '\\(F_n\\)',
       args: {
         n: {
@@ -578,6 +595,8 @@ $(function() {
   var staticGraphs = {
     peterson: {
       desc: 'Peterson graph',
+      longDesc: 'The Petersen graph.',
+      link: 'http://en.wikipedia.org/wiki/Petersen_graph',
       verts: 10,
       edges: [
         [0, 2],
@@ -603,6 +622,8 @@ $(function() {
     },
     durer: {
       desc: 'Dürer graph',
+      longDesc: 'The Dürer graph',
+      link: 'http://en.wikipedia.org/wiki/D%C3%BCrer_graph',
       verts: 12,
       edges: [
         [0, 2],
@@ -631,6 +652,8 @@ $(function() {
     },
     kantor: {
       desc: 'Möbius-Kantor graph',
+      longDesc: 'The Möbius-Kantor graph',
+      link: 'http://en.wikipedia.org/wiki/M%C3%B6bius%E2%80%93Kantor_graph',
       verts: 16,
       edges: [
         [0, 3],
@@ -665,6 +688,8 @@ $(function() {
     },
     dodecahedron: {
       desc: 'dodecahedron Schlegel diagram',
+      longDesc: 'The graph representing the skeleton of the dodecahedron.',
+      link: 'http://en.wikipedia.org/wiki/Dodecahedron#Two-dimensional_symmetry_projections',
       verts: 20,
       edges: [
         [0, 1],
@@ -708,6 +733,8 @@ $(function() {
   _.each(staticGraphs, function(g, name) {
     commonGraphs[name] = {
       desc: g.desc,
+      longDesc: g.longDesc,
+      link: g.link,
       math: g.math,
       args: { },
       verts: '\\(' + g.verts + '\\)',
@@ -1128,7 +1155,28 @@ $(function() {
   commonGraphsRow.append('td')
           .text(function(graph) {
             return graph.desc;
-          });
+          })
+          .filter(function(prop) {
+            return prop.longDesc;
+          })
+          .append('a')
+          .attr('tabindex', 0)
+          .attr('role', 'button')
+          .attr('class', 'help-popover btn btn-xs btn-default')
+          .attr('data-toggle', 'popover')
+          .attr('data-trigger', 'focus')
+          .attr('data-placement', 'bottom')
+          .attr('data-html', true)
+          .attr('title', function(prop) {
+            return prop.desc;
+          })
+          .attr('data-content', function(prop) {
+            var s = prop.longDesc;
+            if (prop.link)
+              s += ' <a href=' + prop.link + ' target="_blank">[more]</a>';
+            return s;
+          })
+          .text('?');
   commonGraphsRow.append('td')
           .text(function(graph) {
             return graph.math || '';
