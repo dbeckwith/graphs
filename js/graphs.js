@@ -26,6 +26,8 @@ $(function() {
     },
     adjMatr: {
       desc: 'adjacency matrix',
+      longDesc: 'The matrix where the i,j<sup>th</sup> entry is a 1 if the i<sup>th</sup> and j<sup>th</sup> vertices are adjacent, or connected by an edge, and otherwise 0.',
+      link: 'http://en.wikipedia.org/wiki/Adjacency_matrix',
       math: '\\(A\\)',
       defaultHidden: true,
       calc: function(vs, es) {
@@ -39,6 +41,7 @@ $(function() {
     degSeq: {
       desc: 'degree sequence',
       longDesc: 'The sequence of degrees of the vertices of the graph. The degree of a vertex is the number of edges it is connected to.',
+      link: 'http://en.wikipedia.org/wiki/Degree_(graph_theory)#Degree_sequence',
       defaultHidden: true,
       calc: function(vs, es) {
         return _.sortBy(_.map(graphProps.adjMatr.value.values, function(row, i) {
@@ -60,6 +63,8 @@ $(function() {
     },
     degMatr: {
       desc: 'degree matrix',
+      longDesc: 'The matrix where the i<sup>th</sup> diagonal entry is the degree of the i<sup>th</sup> vertex and all other entries are 0.',
+      link: 'http://en.wikipedia.org/wiki/Degree_matrix',
       math: '\\(D\\)',
       defaultHidden: true,
       calc: function(vs, es) {
@@ -75,6 +80,8 @@ $(function() {
     },
     laplMatr: {
       desc: 'Laplacian matrix',
+      longDesc: 'The degree matrix of the graph minus the adjaceny matrix of the graph.',
+      link: 'http://en.wikipedia.org/wiki/Laplacian_matrix',
       math: '\\(L\\)',
       defaultHidden: true,
       calc: function(vs, es) {
@@ -83,29 +90,26 @@ $(function() {
     },
     inciMatr: {
       desc: 'incidence matrix',
+      longDesc: 'The matrix where the i,j<sup>th</sup> entry is a 1 if the i<sup>th</sup> vertex and j<sup>th</sup> edge are indicent, or the vertex is part of the edge, and otherwise 0.',
+      link: 'http://en.wikipedia.org/wiki/Incidence_matrix',
       math: '\\(M\\)',
       defaultHidden: true,
       calc: function(vs, es) {
         if (es.length === 0)
           return Matrix.zero(1, vs.length);
-        return Matrix.byFunc(es.length, vs.length, function(e, v) {
+        return Matrix.byFunc(vs.length, es.length, function(v, e) {
           var i = es[e].source.vertNum;
           var j = es[e].target.vertNum;
-          if (i < j) {
-            var temp = i;
-            i = j;
-            j = temp;
-          }
-          if (v === i)
+          if (v === i || v === j)
             return 1;
-          if (v === j)
-            return -1;
           return 0;
         });
       }
     },
     minDeg: {
       desc: 'min degree',
+      longDesc: 'The smallest degree of any vertex.',
+      link: 'http://en.wikipedia.org/wiki/Degree_(graph_theory)',
       math: '\\(\\delta\\)',
       calc: function(vs, es) {
         return vs.length === 0 ? Number.POSITIVE_INFINITY : graphProps.degSeq.value[0].deg;
@@ -113,6 +117,8 @@ $(function() {
     },
     maxDeg: {
       desc: 'max degree',
+      longDesc: 'The largest degree of any vertex.',
+      link: 'http://en.wikipedia.org/wiki/Degree_(graph_theory)',
       math: '\\(\\Delta\\)',
       calc: function(vs, es) {
         return vs.length === 0 ? Number.NEGATIVE_INFINITY : graphProps.degSeq.value[vs.length - 1].deg;
@@ -121,6 +127,7 @@ $(function() {
     regular: {
       desc: 'is regular',
       longDesc: 'Whether all vertices have the same degree or not.',
+      link: 'http://en.wikipedia.org/wiki/Regular_graph',
       calc: function(vs, es) {
         return graphProps.minDeg.value === graphProps.maxDeg.value;
       }
@@ -128,6 +135,7 @@ $(function() {
     components: {
       desc: 'number of components',
       longDesc: 'The number of connected subgraphs.',
+      link: 'http://en.wikipedia.org/wiki/Connected_component_(graph_theory)',
       calc: function(vs, es) {
         var count = 0;
         var seen = []; // kep track of if we've looked at this vertex already
@@ -159,12 +167,14 @@ $(function() {
     connected: {
       desc: 'is connected',
       longDesc: 'Whether the number of components is one or not.',
+      link: 'http://en.wikipedia.org/wiki/Connectivity_(graph_theory)',
       calc: function(vs, es) {
         return graphProps.components.value === 1;
       }
     },
     numTris: {
       desc: 'number of triangles',
+      longDesc: 'The number of disjoint cycles of length 3.',
       calc: function(vs, es) {
         return graphProps.adjMatr.value.pow(3).trace() / 6;
       }
@@ -172,6 +182,7 @@ $(function() {
     bipartite: {
       desc: 'is bipartite',
       longDesc: 'Whether the vertex set can be partitioned into two disjoint subsets such that all edges are only between different subsets or not.',
+      link: 'http://en.wikipedia.org/wiki/Bipartite_graph',
       calc: function(vs, es) {
         if (!graphProps.connected.value || graphProps.numTris.value !== 0) // not connected or has triangles, not bipartite
           return { bipartite: false };
@@ -213,6 +224,7 @@ $(function() {
 //    spanningTrees: {
 //      desc: 'number of spanning trees',
 //      longDesc: 'The number of trees that contain all vertices of the graph and whose only edges are edges of the graph. A tree is a graph without any cycles.',
+//      link: 'http://en.wikipedia.org/wiki/Spanning_tree',
 //      calc: function(vs, es) {
 //        if (!graphProps.connected.value)
 //          return 0;
@@ -234,6 +246,7 @@ $(function() {
     tree: {
       desc: 'is a tree',
       longDesc: 'Whether the graph is connected and has no cycles or not.',
+      link: 'http://en.wikipedia.org/wiki/Tree_(graph_theory)',
       calc: function(vs, es) {
         return graphProps.connected.value && graphProps.size.value === graphProps.order.value - 1;
       }
@@ -241,6 +254,7 @@ $(function() {
     eulerian: {
       desc: 'is Eulerian',
       longDesc: 'Whether the graph contains a circuit which visits every edge or not.',
+      link: 'http://en.wikipedia.org/wiki/Eulerian_path',
       calc: function(vs, es) {
         return graphProps.connected.value && ((graphProps.regular.value && graphProps.minDeg.value % 2 === 0) || _.every(graphProps.degSeq.value, function(deg) {
           return deg.deg % 2 === 0;
@@ -250,6 +264,7 @@ $(function() {
     semiEulerian: {
       desc: 'is semi-Eulerian',
       longDesc: 'Whether the graph contains a trail which visits every edge or not.',
+      link: 'http://en.wikipedia.org/wiki/Eulerian_path',
       calc: function(vs, es) {
         if (graphProps.eulerian.value)
           return true;
@@ -263,7 +278,7 @@ $(function() {
         }) && oddCount === 2;
       }
     }
-    // TODO: num cycles, is tree, diameter, vertex and edge connectivity, non-separable, girth, Hamiltonian
+    // TODO: num cycles, is tree, diameter, vertex and edge connectivity, non-separable, girth, Hamiltonian, chromatic number
   };
 
   // TODO: show properties of selected vertex
@@ -314,6 +329,7 @@ $(function() {
     }
   };
 
+  // TODO: have long descriptions and links for common graphs
   var commonGraphs = {
     complete: {
       desc: 'complete graph',
@@ -1000,7 +1016,6 @@ $(function() {
 
   // setup tables
 
-  // TODO: make longDesc some kind of fancy popup, also so can show math and links
   var graphPropRow = d3.select('#graph-prop-table tbody').selectAll('tr')
           .data(_.map(graphProps, function(prop, name) {
             prop.name = name;
@@ -1009,12 +1024,31 @@ $(function() {
           .enter()
           .append('tr');
   graphPropRow.append('td')
-          .html(function(prop) {
-            var body = prop.desc;
-            if (prop.longDesc)
-              body += ' <abbr title="' + prop.longDesc + '">(?)</abbr>';
-            return body;
-          });
+          .attr('class', 'desc')
+          .text(function(prop) {
+            return prop.desc;
+          })
+          .filter(function(prop) {
+            return prop.longDesc;
+          })
+          .append('a')
+          .attr('tabindex', 0)
+          .attr('role', 'button')
+          .attr('class', 'help-popover btn btn-xs btn-default')
+          .attr('data-toggle', 'popover')
+          .attr('data-trigger', 'focus')
+          .attr('data-placement', 'bottom')
+          .attr('data-html', true)
+          .attr('title', function(prop) {
+            return prop.desc;
+          })
+          .attr('data-content', function(prop) {
+            var s = prop.longDesc;
+            if (prop.link)
+              s += ' <a href=' + prop.link + ' target="_blank">[more]</a>';
+            return s;
+          })
+          .text('?');
   graphPropRow.append('td')
           .text(function(prop) {
             return prop.math || '';
@@ -1133,6 +1167,9 @@ $(function() {
           });
 
   update();
+
+  // activate all popovers
+  $('[data-toggle="popover"]').popover();
 
 //  $('#file-load-input').change(function() {
 //    var file = $(this)[0].files[0];

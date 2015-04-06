@@ -35,6 +35,9 @@
     overflow-y: scroll;
     height: 500pt;
 }
+#graph-prop-table tbody td.desc .help-popover {
+    margin-left: 3pt;
+}
 #graph-prop-table tbody td.value .display-toggle {
     cursor: pointer;
     color: #400C78;
