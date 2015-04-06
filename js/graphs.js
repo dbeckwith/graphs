@@ -353,6 +353,22 @@ $(function() {
         return { vs: vs, es: es, layout: graphLayouts.radial(n) };
       }
     },
+    empty: {
+      desc: 'empty graph',
+      math: '\\(\\overline K_n\\)',
+      args: {
+        n: {
+          min: 1,
+          max: Number.POSITIVE_INFINITY,
+          def: 5
+        }
+      },
+      verts: '\\(n\\)',
+      edges: '\\(0\\)',
+      make: function(n) {
+        return { vs: _.range(n), es: [], layout: graphLayouts.radial(n) };
+      }
+    },
     cycle: {
       desc: 'cycle graph',
       math: '\\(C_n\\)',
@@ -676,8 +692,8 @@ $(function() {
       desc: g.desc,
       math: g.math,
       args: { },
-      verts: g.verts,
-      edges: g.edges.length,
+      verts: '\\(' + g.verts + '\\)',
+      edges: '\\(' + g.edges.length + '\\)',
       make: function() {
         return { vs: _.range(g.verts), es: g.edges, layout: graphLayouts[g.layout.name].apply(null, g.layout.args) };
       }
