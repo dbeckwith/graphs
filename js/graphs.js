@@ -131,6 +131,14 @@ $(function() {
         return graphProps.minDeg.value === graphProps.maxDeg.value;
       }
     },
+    complete: {
+      desc: 'is complete',
+      longDesc: 'Whether the graph has all possible edges or not.',
+      link: 'http://en.wikipedia.org/wiki/Complete_graph',
+      calc: function(vs, es) {
+        return es.length === vs.length * (vs.length - 1) / 2;
+      }
+    },
     components: {
       desc: 'number of components',
       longDesc: 'The number of connected subgraphs.',
@@ -229,7 +237,7 @@ $(function() {
 //          return 0;
 //        if (vs.length === 1)
 //          return 1;
-//        if (es.length === vs.length * (vs.length - 1) / 2)
+//        if (graphProps.complete.value)
 //          return Math.pow(vs.length, vs.length - 2);
 //        if (graphProps.bipartite.value.bipartite) {
 //          var m = graphProps.bipartite.value.m;
