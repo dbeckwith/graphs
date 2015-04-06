@@ -1136,9 +1136,13 @@ $(function() {
                     .attr('max', function(arg) {
                       return arg.max;
                     })
+                    .attr('defaultValue', function(arg) {
+                      return arg.def;
+                    })
                     .attr('value', function(arg) {
                       return arg.def;
-                    });
+                    })
+                    .attr('required', true);
             form.append('button')
                     .attr('type', 'submit')
                     .attr('class', 'btn btn-default')
