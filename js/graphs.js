@@ -268,6 +268,8 @@ $(function() {
       calc: function(vs, es) {
         if (graphProps.eulerian.value)
           return true;
+        if (!graphProps.connected.value)
+          return false;
         var oddCount = 0;
         return _.every(graphProps.degSeq.value, function(deg) {
           if (deg.deg % 2 === 1)
