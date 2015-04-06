@@ -1079,35 +1079,41 @@ $(function() {
             var cell = d3.select(this);
             var form = cell.append('form')
                     .attr('class', 'form-inline');
-            _.each(graph.args, function(arg, argName) {
-              var div = form.append('div')
-                      .attr('class', 'form-group');
-              div.append('label')
-                      .attr('for', 'graph-' + graph.name + '-' + argName)
-                      .text(argName + ':');
-              var input = div.append('input')
-                      .attr('class', 'form-control')
-                      .attr('id', 'graph-' + graph.name + '-' + argName)
-                      .attr('type', 'number');
-              if (arg.min !== undefined)
-                input.attr('min', arg.min);
-              if (arg.max !== undefined)
-                input.attr('max', arg.max);
-              if (arg.def !== undefined)
-                input.attr('value', arg.def);
-            });
+            var formGroup = form.selectAll('.form-group')
+                    .data(_.map(graph.args, function(arg, name) {
+                      arg.name = name;
+                      return arg;
+                    }))
+                    .enter()
+                    .append('div')
+                    .attr('class', 'form-group');
+            formGroup.append('label')
+                    .text(function(arg) {
+                      return '\\(' + arg.name + '\\):';
+                    });
+            formGroup.append('input')
+                    .attr('class', 'form-control')
+                    .attr('type', 'number')
+                    .attr('min', function(arg) {
+                      return arg.min;
+                    })
+                    .attr('max', function(arg) {
+                      return arg.max;
+                    })
+                    .attr('value', function(arg) {
+                      return arg.def;
+                    });
             form.append('button')
                     .attr('type', 'submit')
                     .attr('class', 'btn btn-default')
                     .text('Create');
             form.on('submit', function() {
               console.log('make graph: ' + graph.name);
-              var args = _.map(form.selectAll('input')[0], function(arg) {
-                var argName = $(arg).attr('id');
-                argName = argName.substring(argName.lastIndexOf('-') + 1);
-                var argVal = +$(arg).val();
-                console.log(argName + ': ' + argVal);
-                return argVal;
+              var args = [];
+              formGroup.each(function(arg) {
+                var val = +d3.select(this).select('input').property('value');
+                console.log(arg.name + ': ' + val);
+                args.push(val);
               });
               var g = graph.make.apply(null, args);
               console.log(g.vs.length + ' verts: ' + JSON.stringify(g.vs));
