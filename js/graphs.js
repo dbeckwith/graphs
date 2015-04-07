@@ -313,12 +313,12 @@ $(function() {
         return { x: r * Math.cos(t), y: r * Math.sin(t) };
       };
     },
-    multiRadial: function(n, counts, shifts) {
+    multiRadial: function(n, counts, shifts, dists) {
       var scale = d3.scale.linear().domain([0, 2]).range([0, 100]);
       var coords = _.reduce(_.map(counts, function(count, i) {
         var coords = [];
         for (var j = 0; j < count; j++)
-          coords.push({ r: scale(i), t: j * 2 * Math.PI / count - Math.PI / 2 + (count % 2 === 0 ? Math.PI / count : 0) + (shifts ? shifts[i] : 0) });
+          coords.push({ r: dists ? dists[i] * 100 : scale(i), t: j * 2 * Math.PI / count - Math.PI / 2 + (count % 2 === 0 ? Math.PI / count : 0) + (shifts ? shifts[i] : 0) });
         return coords;
       }), function(all, coords) {
         return all.concat(coords);
@@ -490,21 +490,20 @@ $(function() {
           }
         }
         var layout = null;
-        if (nn <= 3)
-          for (var i = 2; i < n; i += 4) {
-            var temp = vs[i];
-            vs[i] = vs[i + 1];
-            vs[i + 1] = temp;
-          }
-        if (nn <= 2) {
+        if (nn <= 1) {
+          layout = graphLayouts.radial(n);
+        }
+        else if (nn === 2) {
+          vs = [0, 1, 3, 2];
           layout = graphLayouts.radial(n);
         }
         else if (nn === 3) {
-          layout = graphLayouts.multiRadial(n, [0, 4, 4]);
+          vs = [0, 1, 3, 2, 4, 5, 7, 6];
+          layout = graphLayouts.multiRadial(n, [0, 4, 4], null, [0, Math.sqrt(2) / 4, 1]);
         }
         else if (nn === 4) {
           vs = [0, 13, 6, 1, 15, 2, 9, 14, 12, 4, 5, 7, 3, 11, 10, 8];
-          layout = graphLayouts.multiRadial(n, [0, 8, 8]);
+          layout = graphLayouts.multiRadial(n, [0, 8, 8], null, [0, 0.5, 0.5 * Math.sin(3 * Math.PI / 8) / Math.sin(Math.PI / 8)]);
         }
         else {
 //          var counts = [0];
@@ -687,7 +686,7 @@ $(function() {
       ],
       layout: {
         name: 'multiRadial',
-        args: [16, [0, 8, 8]]
+        args: [16, [0, 8, 8], null, [0, 0.5, 0.5 * Math.sin(3 * Math.PI / 8) / Math.sin(Math.PI / 8)]]
       }
     },
     dodecahedron: {
@@ -1243,10 +1242,10 @@ $(function() {
               console.log(g.vs.length + ' verts: ' + JSON.stringify(g.vs));
               console.log(g.es.length + ' edges: ' + JSON.stringify(g.es));
               clear();
-              g.vs.forEach(function(v) {
-                var pos = g.layout(v);
+              g.vs.forEach(function(v, i) {
+                var pos = g.layout(i);
                 console.log(v + ' ' + JSON.stringify(pos));
-                nodes.push({ x: pos.x + width / 2, y: pos.y + height / 2, vertNum: v });
+                nodes[v] = { x: pos.x + width / 2, y: pos.y + height / 2, vertNum: v };
               });
               g.es.forEach(function(e) {
                 links.push({ source: nodes[e[0]], target: nodes[e[1]], edgeNum: e });
