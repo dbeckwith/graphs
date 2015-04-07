@@ -502,6 +502,10 @@ $(function() {
         else if (nn === 3) {
           layout = graphLayouts.multiRadial(n, [0, 4, 4]);
         }
+        else if (nn === 4) {
+          vs = [0, 13, 6, 1, 15, 2, 9, 14, 12, 4, 5, 7, 3, 11, 10, 8];
+          layout = graphLayouts.multiRadial(n, [0, 8, 8]);
+        }
         else {
 //          var counts = [0];
 //          var shifts = [0];
