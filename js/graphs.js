@@ -750,7 +750,7 @@ $(function() {
 
   var width, height;
   // TODO: move things when canvas resizes
-  // TODO: consider canvas height more carefully, maybe should fill view vertically
+  // TODO: consider canvas height more carefully, maybe should fill view vertically (use $(window).resize(handler) and window.innerHeight)
 
   var svg = d3.select('#canvas');
 
