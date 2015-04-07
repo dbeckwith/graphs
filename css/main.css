@@ -3,8 +3,8 @@
     Author     : Daniel Beckwith <sonaxaton.net>
 */
 
-body, h1, h2, h3, h4, h5, h6 {
-    font-family: 'Lato';
+.table > tbody > tr > td {
+    vertical-align: middle;
 }
 
 #canvas {
@@ -56,9 +56,6 @@ tbody td .help-popover {
     font-weight: bold;
 }
 
-#common-graphs-table tbody td {
-    vertical-align: middle;
-}
 #common-graphs-table tbody td.inputs input[type="number"] {
     margin-left: 3pt;
     width: 50pt;
