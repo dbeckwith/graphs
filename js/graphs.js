@@ -5,6 +5,7 @@ function updateTex() {
   MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 }
 
+// TODO: option to show labels on verts and edges
 $(function() {
   var graphProps = {
     order: {
