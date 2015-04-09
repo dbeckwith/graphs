@@ -1304,6 +1304,12 @@ $(function() {
                 links.push({ source: nodes[e[0]], target: nodes[e[1]], edgeNum: e });
               });
               update();
+              {
+                var rect = $('#canvas')[0].getBoundingClientRect();
+                console.log(JSON.stringify(rect));
+                if (rect.top <= -height / 3)
+                  $('body').scrollTo('#canvas', 500);
+              }
               d3.event.preventDefault();
             });
           });
