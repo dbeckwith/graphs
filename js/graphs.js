@@ -131,37 +131,6 @@ $(function() {
         return graphProps.minDeg.value === graphProps.maxDeg.value;
       }
     },
-    diameter: {
-      desc: 'diameter',
-      longDesc: 'The longest length of the shortest path between any two vertices.',
-      link: 'http://en.wikipedia.org/wiki/Distance_(graph_theory)',
-      math: '\\(d\\)',
-      calc: function(vs, es) {
-        if (!graphProps.connected.value)
-          return Number.NEGATIVE_INFINITY;
-        var n = vs.length;
-        var dists = Matrix.byFunc(n, n, function(i, j) {
-          if (i === j)
-            return 0;
-          if (graphProps.adjMatr.value.get(i, j) === 1)
-            return 1;
-          return Number.POSITIVE_INFINITY;
-        });
-        for (var k = 0; k < n; k++)
-          for (var i = 0; i < n; i++)
-            for (var j = 0; j < n; j++) {
-              var newDist = dists.get(i, k) + dists.get(k, j);
-              if (dists.get(i, j) > newDist)
-                dists.set(i, j, newDist);
-            }
-        var diam = Number.NEGATIVE_INFINITY;
-        for (var i = 0; i < n; i++)
-          for (var j = 0; j < n; j++)
-            if (dists.get(i, j) > diam)
-              diam = dists.get(i, j);
-        return diam;
-      }
-    },
     complete: {
       desc: 'is complete',
       longDesc: 'Whether the graph has all possible edges or not.',
@@ -208,6 +177,37 @@ $(function() {
       link: 'http://en.wikipedia.org/wiki/Connectivity_(graph_theory)',
       calc: function(vs, es) {
         return graphProps.components.value === 1;
+      }
+    },
+    diameter: {
+      desc: 'diameter',
+      longDesc: 'The longest length of the shortest path between any two vertices.',
+      link: 'http://en.wikipedia.org/wiki/Distance_(graph_theory)',
+      math: '\\(d\\)',
+      calc: function(vs, es) {
+        if (!graphProps.connected.value)
+          return Number.NEGATIVE_INFINITY;
+        var n = vs.length;
+        var dists = Matrix.byFunc(n, n, function(i, j) {
+          if (i === j)
+            return 0;
+          if (graphProps.adjMatr.value.get(i, j) === 1)
+            return 1;
+          return Number.POSITIVE_INFINITY;
+        });
+        for (var k = 0; k < n; k++)
+          for (var i = 0; i < n; i++)
+            for (var j = 0; j < n; j++) {
+              var newDist = dists.get(i, k) + dists.get(k, j);
+              if (dists.get(i, j) > newDist)
+                dists.set(i, j, newDist);
+            }
+        var diam = Number.NEGATIVE_INFINITY;
+        for (var i = 0; i < n; i++)
+          for (var j = 0; j < n; j++)
+            if (dists.get(i, j) > diam)
+              diam = dists.get(i, j);
+        return diam;
       }
     },
     numTris: {
@@ -867,8 +867,10 @@ $(function() {
             link.edgeNum = i;
           });
         }
+        return true;
       }
     }
+    return false;
   }
 
   function removeNode(node) {
@@ -1004,8 +1006,8 @@ $(function() {
               }
               else {
                 var hadSelection = hasSelection();
-                linkNodes(a);
-                update();
+                if (linkNodes(a))
+                  update();
                 if (!hadSelection || d3.event.shiftKey)
                   selectNode(d3.select(this));
               }
