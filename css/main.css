@@ -13,12 +13,19 @@
     border: 1px solid #ddd;
 }
 #canvas .node {
-    fill: black;
+    pointer-events: none;
 }
-#canvas .node:hover {
+#canvas .node text {
+    fill: white;
+}
+#canvas .node circle {
+    fill: black;
+    pointer-events: all;
+}
+#canvas .node:hover circle {
     fill: blue;
 }
-#canvas .node-selected {
+#canvas .node-selected circle {
     fill: green;
 }
 #canvas .link {

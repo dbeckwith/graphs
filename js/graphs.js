@@ -5,7 +5,7 @@ function updateTex() {
   MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 }
 
-// TODO: option to show labels on verts and edges
+// TODO: option to show labels on edges
 // TODO: should be able to rotate/scale view
 $(function() {
   var graphProps = {
@@ -794,37 +794,11 @@ $(function() {
   var nodes = [];
   var links = [];
 
-  // node drag behavior
-  var drag = d3.behavior.drag()
-          .on('drag', function(d) {
-            d.x = d3.event.x;
-            d.y = d3.event.y;
-            linkObjs
-                    .attr('x1', function(d) {
-                      return d.source.x;
-                    })
-                    .attr('y1', function(d) {
-                      return d.source.y;
-                    })
-                    .attr('x2', function(d) {
-                      return d.target.x;
-                    })
-                    .attr('y2', function(d) {
-                      return d.target.y;
-                    });
-            nodeObjs
-                    .attr('cx', function(d) {
-                      return d.x;
-                    })
-                    .attr('cy', function(d) {
-                      return d.y;
-                    });
-          });
-
   // sets the given node as selected
   function selectNode(node) {
     console.log('select');
-    node.classed('node-selected', true)
+    node.classed('node-selected', true);
+    node.select('circle')
             .transition()
             .duration(300)
             .attr('r', 13);
@@ -833,8 +807,9 @@ $(function() {
   // sets the given node as deselected
   function deselectNode() {
     console.log('deselect');
-    svg.selectAll('.node-selected')
-            .classed('node-selected', false)
+    var node = svg.selectAll('.node-selected')
+            .classed('node-selected', false);
+    node.selectAll('circle')
             .transition()
             .duration(100)
             .attr('r', 8);
@@ -964,7 +939,17 @@ $(function() {
 
   // updates view
   function update() {
+    updateObjData();
+    updateObjs();
+    if (d3.select('#auto-calc-props-checkbox').property('checked'))
+      calcProps();
+  }
+
+  // updates old and new nodes and links based on current data
+  function updateObjData() {
     linkObjs = linkObjs.data(links);
+    nodeObjs = nodeObjs.data(nodes);
+
     linkObjs.enter()
             .insert('line', '.node')
             .attr('class', 'link')
@@ -972,31 +957,25 @@ $(function() {
             .transition()
             .duration(200)
             .attr('opacity', 1);
-    linkObjs
-            .attr('x1', function(d) {
-              return d.source.x;
-            })
-            .attr('y1', function(d) {
-              return d.source.y;
-            })
-            .attr('x2', function(d) {
-              return d.target.x;
-            })
-            .attr('y2', function(d) {
-              return d.target.y;
-            });
-    linkObjs.exit()
-            .transition()
-            .duration(200)
-            .attr('opacity', 0)
-            .remove();
 
-    nodeObjs = nodeObjs.data(nodes);
-    nodeObjs.enter()
-            .append('circle')
-            .attr('class', 'node')
+    var newNodes = nodeObjs.enter()
+            .append('g')
+            .attr('class', 'node');
+    newNodes.append('circle')
             .attr('r', 0)
-            .call(drag)
+            .call(d3.behavior.drag()
+                    .on('dragstart', function(d) {
+                      d.dragstart = d3.mouse(this);
+                    })
+                    .on('drag', function(d) {
+                      var m = d3.mouse(this);
+                      d.x += m[0] - d.dragstart[0];
+                      d.y += m[1] - d.dragstart[1];
+                      updateObjs();
+                    })
+                    .on('dragend', function(d) {
+                      delete d.dragstart;
+                    }))
             .on('click', function() {
               if (d3.event.defaultPrevented)
                 return;
@@ -1011,27 +990,54 @@ $(function() {
                 if (linkNodes(a))
                   update();
                 if (!hadSelection || d3.event.shiftKey)
-                  selectNode(d3.select(this));
+                  selectNode(d3.select(this.parentNode));
               }
             })
             .transition()
             .duration(200)
             .attr('r', 8);
-    nodeObjs
-            .attr('cx', function(d) {
-              return d.x;
-            })
-            .attr('cy', function(d) {
-              return d.y;
+    newNodes.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('baseline-shift', '-3px')
+            .attr('font-size', '10px')
+            .attr('opacity', toolbarButtons.labels.toggleState ? 1.0 : 0.0)
+            .text(function(d) {
+              return d.vertNum + 1;
             });
-    nodeObjs.exit()
+
+    linkObjs.exit()
             .transition()
             .duration(200)
-            .attr('r', 0)
+            .attr('opacity', 0)
             .remove();
 
-    if (d3.select('#auto-calc-props-checkbox').property('checked'))
-      calcProps();
+    var oldNodes = nodeObjs.exit()
+            .transition()
+            .duration(200)
+            .remove();
+    oldNodes.selectAll('circle')
+            .attr('r', 0);
+  }
+
+  // updates current nodes and links
+  function updateObjs() {
+    linkObjs
+            .attr('x1', function(d) {
+              return d.source.x;
+            })
+            .attr('y1', function(d) {
+              return d.source.y;
+            })
+            .attr('x2', function(d) {
+              return d.target.x;
+            })
+            .attr('y2', function(d) {
+              return d.target.y;
+            });
+    nodeObjs
+            .attr('transform', function(d) {
+              return 'translate(' + d.x + ',' + d.y + ')';
+            });
   }
 
   // tests if two vertices are adjacent
@@ -1043,55 +1049,69 @@ $(function() {
 
   // setup toolbar
   var toolbarButtonSize = 40;
+  var toolbarButtons = { help: {
+      img: 'img/help.svg',
+      onclick: function() {
+        $('#help').css({ 'background-color': 'hsla(240,100%,90%,0.9)' });
+        $('body').scrollTo('#help', 500, function() {
+          $('#help').animate({ 'background-color': 'hsla(240,100%,90%,0.0)' }, 500);
+        });
+      },
+      title: 'Help'
+    },
+    clear: {
+      img: 'img/erase.svg',
+      onclick: function() {
+        clear();
+        update();
+      },
+      title: 'Clear'
+    },
+    complement: {
+      img: 'img/complement.svg',
+      onclick: function() {
+        var old_links = links.slice(0);
+        links.splice(0, links.length);
+        var e = 0;
+        for (var i = 0; i < nodes.length; i++)
+          for (var j = i + 1; j < nodes.length; j++) {
+            var n1 = nodes[i];
+            var n2 = nodes[j];
+            if (!_.any(old_links, function(e) {
+              return (e.source === n1 && e.target === n2) || (e.source === n2 && e.target === n1);
+            })) {
+              links.push({ target: n1, source: n2, edgeNum: e++ });
+            }
+          }
+        update();
+      },
+      title: 'Graph complement'
+    },
+    labels: {
+      img: 'img/numbers.svg',
+      onclick: function(d) {
+        nodeObjs.selectAll('text')
+                .transition()
+                .duration(500)
+                .attr('opacity', d.toggleState ? 1.0 : 0.0);
+      },
+      title: 'Show vertex labels',
+      toggleable: true,
+      toggleState: false
+    },
+    recalc: {
+      img: 'img/calc.svg',
+      onclick: function() {
+        calcProps();
+      },
+      title: 'Recalculate properties'
+    } };
   var toolbar = interactLayer.append('g').attr('class', 'toolbar')
           .selectAll('.toolbar-btn')
-          .data([
-            {
-              img: 'img/help.svg',
-              onclick: function() {
-                $('#help').css({ 'background-color': 'hsla(240,100%,90%,0.9)' });
-                $('body').scrollTo('#help', 500, function() {
-                  $('#help').animate({ 'background-color': 'hsla(240,100%,90%,0.0)' }, 500);
-                });
-              },
-              title: 'Help'
-            },
-            {
-              img: 'img/erase.svg',
-              onclick: function() {
-                clear();
-                update();
-              },
-              title: 'Clear'
-            },
-            {
-              img: 'img/calc.svg',
-              onclick: function() {
-                calcProps();
-              },
-              title: 'Recalculate properties'
-            },
-            {
-              img: 'img/complement.svg',
-              onclick: function() {
-                var old_links = links.slice(0);
-                links.splice(0, links.length);
-                var e = 0;
-                for (var i = 0; i < nodes.length; i++)
-                  for (var j = i + 1; j < nodes.length; j++) {
-                    var n1 = nodes[i];
-                    var n2 = nodes[j];
-                    if (!_.any(old_links, function(e) {
-                      return (e.source === n1 && e.target === n2) || (e.source === n2 && e.target === n1);
-                    })) {
-                      links.push({ target: n1, source: n2, edgeNum: e++ });
-                    }
-                  }
-                update();
-              },
-              title: 'Graph complement'
-            }
-          ])
+          .data(_.map(toolbarButtons, function(button, name) {
+            button.name = name;
+            return button;
+          }))
           .enter()
           .append('g')
           .attr('class', 'toolbar-btn')
@@ -1107,22 +1127,31 @@ $(function() {
           .attr('cy', toolbarButtonSize / 2)
           .attr('r', toolbarButtonSize / 2)
           .attr('fill', 'red')
-          .attr('fill-opacity', '0.0')
+          .attr('fill-opacity', function(d) {
+            return d.toggleable ? (d.toggleState ? 1.0 : 0.0) : 0.0;
+          })
           .attr('stroke', 'black')
           .attr('stroke-width', '2')
           .on('mouseover', function(d) {
             d3.select(this)
                     .transition()
                     .duration(100)
-                    .attr('fill-opacity', '1.0');
+                    .attr('fill-opacity', d.toggleable ? 0.5 : 1.0);
           })
-          .on('mouseout', function() {
+          .on('mouseout', function(d) {
             d3.select(this)
                     .transition()
                     .duration(100)
-                    .attr('fill-opacity', '0.0');
+                    .attr('fill-opacity', d.toggleable ? (d.toggleState ? 1.0 : 0.0) : 0.0);
           })
           .on('click', function(d, i) {
+            if (d.toggleable) {
+              d.toggleState = !d.toggleState;
+              d3.select(this)
+                      .transition()
+                      .duration(100)
+                      .attr('fill-opacity', d.toggleState ? 1.0 : 0.0);
+            }
             d.onclick.apply(this, [d, i]);
           });
   toolbar.append('image')
