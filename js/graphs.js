@@ -6,6 +6,7 @@ function updateTex() {
 }
 
 // TODO: option to show labels on verts and edges
+// TODO: should be able to rotate/scale view
 $(function() {
   var graphProps = {
     order: {
