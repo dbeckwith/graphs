@@ -1066,6 +1066,26 @@ $(function() {
                 calcProps();
               },
               title: 'Recalculate properties'
+            },
+            {
+              img: 'img/complement.svg',
+              onclick: function() {
+                var old_links = links.slice(0);
+                links.splice(0, links.length);
+                var e = 0;
+                for (var i = 0; i < nodes.length; i++)
+                  for (var j = i + 1; j < nodes.length; j++) {
+                    var n1 = nodes[i];
+                    var n2 = nodes[j];
+                    if (!_.any(old_links, function(e) {
+                      return (e.source === n1 && e.target === n2) || (e.source === n2 && e.target === n1);
+                    })) {
+                      links.push({ target: n1, source: n2, edgeNum: e++ });
+                    }
+                  }
+                update();
+              },
+              title: 'Graph complement'
             }
           ])
           .enter()

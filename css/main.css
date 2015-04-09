@@ -28,6 +28,9 @@
     fill: none;
     pointer-events: all;
 }
+#canvas .toolbar-btn {
+    cursor: pointer;
+}
 #canvas .toolbar-btn circle {
     pointer-events: all;
 }
