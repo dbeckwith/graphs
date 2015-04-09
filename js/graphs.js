@@ -1308,7 +1308,7 @@ $(function() {
               {
                 var rect = $('#canvas')[0].getBoundingClientRect();
                 console.log(JSON.stringify(rect));
-                if (rect.top <= -height / 3)
+                if (rect.top <= -width / 3)
                   $('body').scrollTo('#canvas', 500);
               }
               d3.event.preventDefault();
