@@ -945,6 +945,20 @@ $(function() {
       calcProps();
   }
 
+  var nodeDrag = d3.behavior.drag()
+          .on('dragstart', function(d) {
+            d.dragstart = d3.mouse(this);
+          })
+          .on('drag', function(d) {
+            var m = d3.mouse(this);
+            d.x += m[0] - d.dragstart[0];
+            d.y += m[1] - d.dragstart[1];
+            updateObjs();
+          })
+          .on('dragend', function(d) {
+            delete d.dragstart;
+          });
+
   // updates old and new nodes and links based on current data
   function updateObjData() {
     linkObjs = linkObjs.data(links);
@@ -963,19 +977,7 @@ $(function() {
             .attr('class', 'node');
     newNodes.append('circle')
             .attr('r', 0)
-            .call(d3.behavior.drag()
-                    .on('dragstart', function(d) {
-                      d.dragstart = d3.mouse(this);
-                    })
-                    .on('drag', function(d) {
-                      var m = d3.mouse(this);
-                      d.x += m[0] - d.dragstart[0];
-                      d.y += m[1] - d.dragstart[1];
-                      updateObjs();
-                    })
-                    .on('dragend', function(d) {
-                      delete d.dragstart;
-                    }))
+            .call(nodeDrag)
             .on('click', function() {
               if (d3.event.defaultPrevented)
                 return;
