@@ -974,10 +974,10 @@ $(function() {
 
     var newNodes = nodeObjs.enter()
             .append('g')
-            .attr('class', 'node');
+            .attr('class', 'node')
+            .call(nodeDrag);
     newNodes.append('circle')
             .attr('r', 0)
-            .call(nodeDrag)
             .on('click', function() {
               if (d3.event.defaultPrevented)
                 return;
@@ -1339,7 +1339,6 @@ $(function() {
               update();
               {
                 var rect = $('#canvas')[0].getBoundingClientRect();
-                console.log(JSON.stringify(rect));
                 if (rect.top <= -width / 3)
                   $('body').scrollTo('#canvas', 500);
               }
