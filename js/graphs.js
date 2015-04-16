@@ -181,14 +181,9 @@ $(function() {
         return graphProps.components.value === 1;
       }
     },
-    diameter: {
-      desc: 'diameter',
-      longDesc: 'The longest length of the shortest path between any two vertices.',
-      link: 'http://en.wikipedia.org/wiki/Distance_(graph_theory)',
-      math: '\\(d\\)',
+    distMatr: {
+      hidden: true,
       calc: function(vs, es) {
-        if (!graphProps.connected.value)
-          return Number.NEGATIVE_INFINITY;
         var n = vs.length;
         var dists = Matrix.byFunc(n, n, function(i, j) {
           if (i === j)
@@ -204,12 +199,41 @@ $(function() {
               if (dists.get(i, j) > newDist)
                 dists.set(i, j, newDist);
             }
-        var diam = Number.NEGATIVE_INFINITY;
-        for (var i = 0; i < n; i++)
-          for (var j = 0; j < n; j++)
-            if (dists.get(i, j) > diam)
-              diam = dists.get(i, j);
+        return dists;
+      }
+    },
+    diameter: {
+      desc: 'diameter',
+      longDesc: 'The largest eccentricity of all vertices. The eccentricity of a vertex is the largest distance between it and any other vertex. The distance between two vertices is the length of the shortest path between them.',
+      link: 'http://en.wikipedia.org/wiki/Distance_(graph_theory)',
+      math: '\\(d\\)',
+      calc: function(vs, es) {
+        if (!graphProps.connected.value)
+          return 0;
+        var diam = 0;
+        for (var i = 0; i < vs.length; i++)
+          for (var j = i; j < vs.length; j++)
+            diam = Math.max(diam, graphProps.distMatr.value.get(i, j));
         return diam;
+      }
+    },
+    radius: {
+      desc: 'radius',
+      longDesc: 'The smallest eccentricity of all vertices. The eccentricity of a vertex is the largest distance between it and any other vertex. The distance between two vertices is the length of the shortest path between them.',
+      link: 'http://en.wikipedia.org/wiki/Distance_(graph_theory)',
+      math: '\\(r\\)',
+      calc: function(vs, es) {
+        if (!graphProps.connected.value)
+          return 0;
+        var rad = Number.POSITIVE_INFINITY;
+        for (var i = 0; i < vs.length; i++) {
+          var ecc = 0;
+          for (var j = 0; j < vs.length; j++)
+            if (i !== j)
+              ecc = Math.max(ecc, graphProps.distMatr.value.get(i, j));
+          rad = Math.min(rad, ecc);
+        }
+        return rad;
       }
     },
     numTris: {
@@ -899,10 +923,13 @@ $(function() {
 
   // updates properties table
   function calcProps() {
-    graphPropRow.each(function(prop) {
+    _.each(graphProps, function(prop) {
       console.log('updating prop ' + prop.name);
-      var val = prop.value = prop.calc(nodes, links);
-      console.log(val);
+      prop.value = prop.calc(nodes, links);
+      console.log(prop.value);
+    });
+    graphPropRow.each(function(prop) {
+      var val = prop.value;
       if (prop.repr) {
         val = prop.repr(val);
       }
@@ -1167,9 +1194,11 @@ $(function() {
   // setup tables
 
   var graphPropRow = d3.select('#graph-prop-table tbody').selectAll('tr')
-          .data(_.map(graphProps, function(prop, name) {
+          .data(_.filter(_.map(graphProps, function(prop, name) {
             prop.name = name;
             return prop;
+          }), function(prop) {
+            return !prop.hidden;
           }))
           .enter()
           .append('tr');
