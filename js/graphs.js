@@ -182,7 +182,8 @@ $(function() {
       }
     },
     distMatr: {
-      hidden: true,
+      desc: 'distance matrix',
+      defaultHidden: true,
       calc: function(vs, es) {
         var n = vs.length;
         var dists = Matrix.byFunc(n, n, function(i, j) {
@@ -313,6 +314,19 @@ $(function() {
       link: 'http://en.wikipedia.org/wiki/Tree_(graph_theory)',
       calc: function(vs, es) {
         return graphProps.connected.value && graphProps.size.value === graphProps.order.value - 1;
+      }
+    },
+    girth: {
+      desc: 'girth',
+      longDesc: 'The length of the shortest cycle.',
+      link: 'http://en.wikipedia.org/wiki/Girth_(graph_theory)',
+      calc: function(vs, es) {
+        if (!graphProps.connected.value || graphProps.tree.value)
+          return Number.POSITIVE_INFINITY;
+        var g = Number.POSITIVE_INFINITY;
+        //http://stackoverflow.com/questions/12890106/find-the-girth-of-a-graph
+        //http://webcourse.cs.technion.ac.il/234247/Winter2003-2004/ho/WCFiles/Girth.pdf
+        return g;
       }
     },
     semiEulerian: {
