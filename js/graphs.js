@@ -183,7 +183,7 @@ $(function() {
     },
     distMatr: {
       desc: 'distance matrix',
-      defaultHidden: true,
+      hidden: true,
       calc: function(vs, es) {
         var n = vs.length;
         var dists = Matrix.byFunc(n, n, function(i, j) {
@@ -384,7 +384,7 @@ $(function() {
         }));
       }
     }
-    // TODO: num cycles, vertex and edge connectivity, non-separable, girth, Hamiltonian, chromatic number and index, circuit rank,clique number, characteristic polynomial, chromatic polynomial, is perfect, is planar
+    // TODO: num cycles, vertex and edge connectivity, non-separable, Hamiltonian, chromatic number and index, circuit rank,clique number, characteristic polynomial, chromatic polynomial, is perfect, is planar
   };
 
   // TODO: show properties of selected vertex (also is bridge vertex), maybe not worth showing
