@@ -877,15 +877,17 @@ $(function() {
   function removeNode(node) {
     console.log('remove');
     var selected = d3.selectAll('.node-selected');
-    var a = node, b = selected.empty() ? null : selected.datum();
-    if (a === b)
+    var a = node;
+    if (!selected.empty() && a === selected.datum())
       deselectNode();
-    nodes.splice(nodes.indexOf(a), 1);
+    nodes = _.filter(nodes, function(n) {
+      return n !== a;
+    });
+    links = _.filter(links, function(l) {
+      return !(l.source === a || l.target === a);
+    });
     nodes.forEach(function(node, i) {
       node.vertNum = i;
-    });
-    links = _.filter(links, function(link) {
-      return !(link.source === a || link.target === a);
     });
     links.forEach(function(link, i) {
       link.edgeNum = i;
@@ -990,6 +992,9 @@ $(function() {
   function updateObjData() {
     linkObjs = linkObjs.data(links);
     nodeObjs = nodeObjs.data(nodes);
+
+    nodeObjs.select('circle');
+    nodeObjs.select('text');
 
     linkObjs.enter()
             .insert('line', '.node')
@@ -1360,10 +1365,10 @@ $(function() {
               g.vs.forEach(function(v, i) {
                 var pos = g.layout(i);
                 console.log(v + ' ' + JSON.stringify(pos));
-                nodes[v] = { x: pos.x + width / 2, y: pos.y + height / 2, vertNum: v };
+                nodes[v] = { x: pos.x + width / 2, y: pos.y + height / 2, vertNum: i };
               });
-              g.es.forEach(function(e) {
-                links.push({ source: nodes[e[0]], target: nodes[e[1]], edgeNum: e });
+              g.es.forEach(function(e, i) {
+                links.push({ source: nodes[e[0]], target: nodes[e[1]], edgeNum: i });
               });
               update();
               {
