@@ -323,9 +323,37 @@ $(function() {
       calc: function(vs, es) {
         if (!graphProps.connected.value || graphProps.tree.value)
           return Number.POSITIVE_INFINITY;
+        if (graphProps.numTris.value > 0)
+          return 3;
         var g = Number.POSITIVE_INFINITY;
-        //http://stackoverflow.com/questions/12890106/find-the-girth-of-a-graph
-        //http://webcourse.cs.technion.ac.il/234247/Winter2003-2004/ho/WCFiles/Girth.pdf
+        // algorithm from http://webcourse.cs.technion.ac.il/234247/Winter2003-2004/ho/WCFiles/Girth.pdf
+
+        for (var i = 0; i < vs.length; i++) {
+          var v = vs[i];
+          var S = [];
+          var R = [v];
+          v.__parent = null;
+          v.__dist = 0;
+          while (R.length) {
+            var x = R.shift();
+            S.push(x);
+            _.filter(vs, function(u) {
+              return isAdj(u, x) && u !== x.__parent;
+            }).forEach(function(y) {
+              if (S.indexOf(y) === -1) {
+                y.__parent = x;
+                y.__dist = x.__dist + 1;
+                R.push(y);
+              } else {
+                g = Math.min(g, x.__dist + y.__dist + 1);
+              }
+            });
+          }
+        }
+        vs.forEach(function(v) {
+          delete v.__parent, v.__dist;
+        });
+
         return g;
       }
     },
