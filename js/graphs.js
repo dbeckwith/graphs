@@ -320,6 +320,7 @@ $(function() {
       desc: 'girth',
       longDesc: 'The length of the shortest cycle.',
       link: 'http://en.wikipedia.org/wiki/Girth_(graph_theory)',
+      math: '\\(g\\)',
       calc: function(vs, es) {
         if (!graphProps.connected.value || graphProps.tree.value)
           return Number.POSITIVE_INFINITY;
