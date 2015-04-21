@@ -386,6 +386,7 @@ $(function() {
       }
     }
     // TODO: num cycles, vertex and edge connectivity, non-separable, Hamiltonian, chromatic number and index, circuit rank,clique number, characteristic polynomial, chromatic polynomial, is perfect, is planar
+    // TODO: line graph
   };
 
   // TODO: show properties of selected vertex (also is bridge vertex), maybe not worth showing
