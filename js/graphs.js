@@ -386,7 +386,6 @@ $(function() {
       }
     }
     // TODO: num cycles, vertex and edge connectivity, non-separable, Hamiltonian, chromatic number and index, circuit rank,clique number, characteristic polynomial, chromatic polynomial, is perfect, is planar
-    // TODO: line graph
   };
 
   // TODO: show properties of selected vertex (also is bridge vertex), maybe not worth showing
@@ -1164,6 +1163,29 @@ $(function() {
         update();
       },
       title: 'Graph complement'
+    },
+    linegraph: {
+      img: 'img/linegraph.svg',
+      onclick: function() {
+        var old_links = links.slice(0);
+        links.splice(0, links.length);
+        var old_nodes = nodes.slice(0);
+        nodes.splice(0, nodes.length);
+        old_links.forEach(function(l, i) {
+          nodes.push({ x: (l.target.x + l.source.x) / 2, y: (l.target.y + l.source.y) / 2, vertNum: i });
+        });
+        var e = 0;
+        for (var i = 0; i < old_links.length; i++)
+          for (var j = i + 1; j < old_links.length; j++) {
+            var l1 = old_links[i];
+            var l2 = old_links[j];
+            if (l1.source === l2.source || l1.source === l2.target || l1.target === l2.source || l1.target === l2.target) {
+              links.push({ target: nodes[l1.edgeNum], source: nodes[l2.edgeNum], edgeNum: e++ });
+            }
+          }
+        update();
+      },
+      title: 'Line graph'
     },
     labels: {
       img: 'img/numbers.svg',
