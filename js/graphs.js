@@ -692,6 +692,48 @@ $(function() {
         }
         return { vs: vs, es: es, layout: n === 1 ? graphLayouts.radial(2 * n + 1) : graphLayouts.multiRadial(2 * n + 1, [1, 0, 2 * n + 1 - 1]) };
       }
+    },
+    johnson: {
+      desc: 'Johnson graph',
+      longDesc: 'The graph with n 3-cycles sharing only a single common vertex.',
+      link: 'http://en.wikipedia.org/wiki/Johnson_graph',
+      math: '\\(J\\!\\left(n,k\\right)\\)',
+      args: {
+        n: {
+          min: 1,
+          def: 5
+        },
+        k: {
+          min: 1,
+          def: 2
+        }
+      },
+      verts: '\\(\\binom n k\\)',
+      edges: '\\(\\frac{k\\left(n-k\\right)}2\\binom n k\\)',
+      make: function(n, k) {
+        var elements = [];
+        for (var i = 0; i < k; i++) {
+          elements.push(i);
+        }
+        var vs = [];
+        var es = [];
+        var done = false;
+        while (!done) {
+          console.log(elements);
+          for (var i = k - 1; i >= 0; i--) {
+            if (++elements[i] >= n - (k - i - 1)) {
+              if (i === 0) {
+                done = true;
+                break;
+              }
+              elements[i] = elements[i - 1] + 2;
+            }
+            else
+              break;
+          }
+        }
+        return { vs: vs, es: es, layout: n === 1 ? graphLayouts.radial(2 * n + 1) : graphLayouts.multiRadial(2 * n + 1, [1, 0, 2 * n + 1 - 1]) };
+      }
     }
   };
 
