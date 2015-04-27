@@ -695,7 +695,7 @@ $(function() {
     },
     johnson: {
       desc: 'Johnson graph',
-      longDesc: 'The graph with n 3-cycles sharing only a single common vertex.',
+      longDesc: 'The graph representing k-element subsets of n elements whch are related if they share exactly k-1 elements.',
       link: 'http://en.wikipedia.org/wiki/Johnson_graph',
       math: '\\(J\\!\\left(n,k\\right)\\)',
       args: {
@@ -704,35 +704,101 @@ $(function() {
           def: 5
         },
         k: {
-          min: 1,
+          min: 0,
           def: 2
         }
       },
       verts: '\\(\\binom n k\\)',
       edges: '\\(\\frac{k\\left(n-k\\right)}2\\binom n k\\)',
       make: function(n, k) {
+        if (k > n)
+          return { vs: [], es: [], layout: graphLayouts.radial(0) };
         var elements = [];
         for (var i = 0; i < k; i++) {
           elements.push(i);
         }
-        var vs = [];
-        var es = [];
+        var sets = [];
         var done = false;
         while (!done) {
-          console.log(elements);
+          sets.push(elements.slice(0));
           for (var i = k - 1; i >= 0; i--) {
-            if (++elements[i] >= n - (k - i - 1)) {
+            if (i < k - 1)
+              elements[i + 1] = elements[i] + 2;
+            for (var j = i + 1; j + 1 < k; j++)
+              elements[j + 1] = elements[j] + 1;
+            if (++elements[i] > n - (k - i - 1) - 1) {
               if (i === 0) {
                 done = true;
                 break;
               }
-              elements[i] = elements[i - 1] + 2;
             }
             else
               break;
           }
         }
-        return { vs: vs, es: es, layout: n === 1 ? graphLayouts.radial(2 * n + 1) : graphLayouts.multiRadial(2 * n + 1, [1, 0, 2 * n + 1 - 1]) };
+        var vs = [];
+        var es = [];
+        sets.forEach(function(s, i) {
+          vs.push(i);
+          for (var j = sets.length - 1; j > i; j--)
+            if (_.intersection(s, sets[j]).length === k - 1)
+              es.push([i, j]);
+        });
+        return { vs: vs, es: es, layout: graphLayouts.radial(vs.length) };
+      }
+    },
+    kneser: {
+      desc: 'Kneser graph',
+      longDesc: 'The graph representing k-element subsets of n elements whch are related if they are disjoint.',
+      link: 'http://en.wikipedia.org/wiki/Kneser_graph',
+      math: '\\(K\\!\\left(n,k\\right)\\)',
+      args: {
+        n: {
+          min: 1,
+          def: 5
+        },
+        k: {
+          min: 0,
+          def: 2
+        }
+      },
+      verts: '\\(\\binom n k\\)',
+      edges: '\\(\\binom n k\\binom{n-k}k/2\\)',
+      make: function(n, k) {
+        if (k > n)
+          return { vs: [], es: [], layout: graphLayouts.radial(0) };
+        var elements = [];
+        for (var i = 0; i < k; i++) {
+          elements.push(i);
+        }
+        var sets = [];
+        var done = false;
+        while (!done) {
+          sets.push(elements.slice(0));
+          for (var i = k - 1; i >= 0; i--) {
+            if (i < k - 1)
+              elements[i + 1] = elements[i] + 2;
+            for (var j = i + 1; j + 1 < k; j++)
+              elements[j + 1] = elements[j] + 1;
+            if (++elements[i] > n - (k - i - 1) - 1) {
+              if (i === 0) {
+                done = true;
+                break;
+              }
+            }
+            else
+              break;
+          }
+        }
+        var vs = [];
+        var es = [];
+        sets.forEach(function(s, i) {
+          vs.push(i);
+          for (var j = sets.length - 1; j > i; j--)
+            if (_.intersection(s, sets[j]).length === 0)
+              es.push([i, j]);
+        });
+        return { vs: vs, es: es, layout: graphLayouts.radial(vs.length) };
       }
     }
   };
