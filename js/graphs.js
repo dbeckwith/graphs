@@ -922,6 +922,72 @@ $(function() {
         args: [16, [0, 8, 8], null, [0, 0.5, 0.5 * Math.sin(3 * Math.PI / 8) / Math.sin(Math.PI / 8)]]
       }
     },
+    octahedron: {
+      desc: 'octahedron Schlegel diagram',
+      longDesc: 'The graph representing the skeleton of the octahedron.',
+      link: 'http://en.wikipedia.org/wiki/Octahedron',
+      verts: 6,
+      edges: [
+        [0, 1],
+        [1, 2],
+        [2, 0],
+        [3, 0],
+        [3, 2],
+        [3, 4],
+        [3, 5],
+        [4, 0],
+        [4, 1],
+        [4, 5],
+        [5, 1],
+        [5, 2]
+      ],
+      layout: {
+        name: 'multiRadial',
+        args: [6, [0, 3, 0, 0, 3], [0, Math.PI / 3, 0, 0, 0]]
+      }
+    },
+    icosahedron: {
+      desc: 'icosahedron Schlegel diagram',
+      longDesc: 'The graph representing the skeleton of the icosahedron.',
+      link: 'http://en.wikipedia.org/wiki/Regular_icosahedron#Icosahedral_graph',
+      verts: 12,
+      edges: [
+        [0, 1],
+        [1, 2],
+        [2, 0],
+        [3, 0],
+        [3, 2],
+        [3, 4],
+        [3, 8],
+        [4, 0],
+        [4, 5],
+        [5, 0],
+        [5, 1],
+        [5, 6],
+        [6, 1],
+        [6, 7],
+        [7, 1],
+        [7, 2],
+        [7, 8],
+        [8, 2],
+        [9, 3],
+        [9, 4],
+        [9, 8],
+        [9, 10],
+        [9, 11],
+        [10, 4],
+        [10, 5],
+        [10, 6],
+        [10, 11],
+        [11, 6],
+        [11, 7],
+        [11, 8]
+      ],
+      layout: {
+        name: 'multiRadial',
+        args: [12, [0, 3, 6, 0, 0, 3], [0, Math.PI / 3, -Math.PI / 6, 0, 0, 0]]
+      }
+    },
     dodecahedron: {
       desc: 'dodecahedron Schlegel diagram',
       longDesc: 'The graph representing the skeleton of the dodecahedron.',
