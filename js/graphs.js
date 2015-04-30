@@ -678,7 +678,7 @@ $(function() {
         }
       },
       verts: '\\(2n+1\\)',
-      edges: '\\(2n\\)',
+      edges: '\\(3n\\)',
       make: function(n) {
         var vs = [0];
         var es = [];
@@ -691,6 +691,31 @@ $(function() {
           es.push([a, b]);
         }
         return { vs: vs, es: es, layout: n === 1 ? graphLayouts.radial(2 * n + 1) : graphLayouts.multiRadial(2 * n + 1, [1, 0, 2 * n + 1 - 1]) };
+      }
+    },
+    book: {
+      desc: 'book graph',
+      longDesc: 'The graph with n 3-cycles sharing a common edge.',
+      link: 'http://en.wikipedia.org/wiki/Book_%28graph_theory%29',
+      math: '\\(B_n\\)',
+      args: {
+        n: {
+          min: 0,
+          def: 3
+        }
+      },
+      verts: '\\(n+2\\)',
+      edges: '\\(2n+1\\)',
+      make: function(n) {
+        var vs = [0, 1];
+        var es = [[0, 1]];
+        for (var i = 0; i < n; i++) {
+          var a;
+          vs.push(a = vs.length);
+          es.push([0, a]);
+          es.push([1, a]);
+        }
+        return { vs: vs, es: es, layout: graphLayouts.horizLines(n + 2, 2) };
       }
     },
     johnson: {
