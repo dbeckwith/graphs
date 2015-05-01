@@ -1494,7 +1494,7 @@ $(function() {
           .attr('data-content', function(prop) {
             var s = prop.longDesc;
             if (prop.link)
-              s += ' <a href=' + prop.link + ' target="_blank">[more]</a>';
+              s += ' <a href="' + prop.link + '" target="_blank">[more]</a>';
             return s;
           })
           .text('?');
@@ -1561,7 +1561,7 @@ $(function() {
           .attr('data-content', function(prop) {
             var s = prop.longDesc;
             if (prop.link)
-              s += ' <a href=' + prop.link + ' target="_blank">[more]</a>';
+              s += ' <a href="' + prop.link + '" target="_blank">[more]</a>';
             return s;
           })
           .text('?');
