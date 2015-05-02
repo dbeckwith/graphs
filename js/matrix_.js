@@ -138,7 +138,7 @@ function Matrix(values) {
   this.minor = function(i, j) {
     return Matrix.byFunc(this.rows - 1, this.cols - 1, function(i2, j2) {
       return this.get(i2 < i ? i2 : i2 + 1, j2 < j ? j2 : j2 + 1);
-    }, this).determinant();
+    }, this).det();
   };
 
   this.cofactor = function(i, j) {
