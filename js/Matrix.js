@@ -22,21 +22,21 @@ var Matrix = (function () {
         this._rows = this._values.length;
         this._cols = 0;
         this._values.forEach(function (row) {
-            if (_this.cols === 0)
-                _this.cols = row.length;
-            else if (row.length !== _this.cols)
+            if (_this._cols === 0)
+                _this._cols = row.length;
+            else if (row.length !== _this._cols)
                 throw new Error('Matrix is not rectangular');
         });
-        this.square = this.rows === this.cols;
+        this.square = this._rows === this._cols;
         this.valuesTrans = [];
-        for (var j = 0; j < this.cols; j++) {
+        for (var j = 0; j < this._cols; j++) {
             this.valuesTrans.push([]);
-            for (var i = 0; i < this.rows; i++) {
+            for (var i = 0; i < this._rows; i++) {
                 this.valuesTrans[j].push(this._values[i][j]);
             }
         }
         this.symmetric = this.square;
-        for (var i = 1; this.symmetric && i < this.rows; i++) {
+        for (var i = 1; this.symmetric && i < this._rows; i++) {
             for (var j = 0; j < i; j++) {
                 if (this.get(i, j) !== this.get(j, i)) {
                     this.symmetric = false;
@@ -93,9 +93,9 @@ var Matrix = (function () {
      * @returns {number}
      */
     Matrix.prototype.get = function (row, col) {
-        if (row <= 0 || row > this.rows)
+        if (row < 0 || row >= this.rows)
             throw new Error('Row number of out range.');
-        if (col <= 0 || col > this.cols)
+        if (col < 0 || col >= this.cols)
             throw new Error('Column number of out range.');
         return this._values[row][col];
     };
@@ -105,7 +105,7 @@ var Matrix = (function () {
      * @returns {number[]}
      */
     Matrix.prototype.getRow = function (row) {
-        if (row <= 0 || row > this.rows)
+        if (row < 0 || row >= this.rows)
             throw new Error('Row number of out range.');
         return this._values[row];
     };
@@ -115,7 +115,7 @@ var Matrix = (function () {
      * @returns {number[]}
      */
     Matrix.prototype.getCol = function (col) {
-        if (col <= 0 || col > this.cols)
+        if (col < 0 || col >= this.cols)
             throw new Error('Column number of out range.');
         return this.valuesTrans[col];
     };
@@ -171,9 +171,9 @@ var Matrix = (function () {
      * @param value
      */
     Matrix.prototype.set = function (row, col, value) {
-        if (row <= 0 || row > this.rows)
+        if (row < 0 || row >= this.rows)
             throw new Error('Row number of out range.');
-        if (col <= 0 || col > this.cols)
+        if (col < 0 || col >= this.cols)
             throw new Error('Column number of out range.');
         this._values[row][col] = value;
     };
@@ -494,5 +494,4 @@ var Matrix = (function () {
     };
     return Matrix;
 })();
-module.exports = Matrix;
 //# sourceMappingURL=Matrix.js.map

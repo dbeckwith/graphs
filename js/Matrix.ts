@@ -4,7 +4,6 @@
 
 ///<reference path="libs/underscore.js/underscore.d.ts"/>
 
-
 interface PLU {
     P:Matrix;
     L:Matrix;
@@ -47,19 +46,19 @@ class Matrix {
         this._rows = this._values.length;
         this._cols = 0;
         this._values.forEach((row:number[]) => {
-            if (this.cols === 0) this.cols = row.length;
-            else if (row.length !== this.cols) throw new Error('Matrix is not rectangular');
+            if (this._cols === 0) this._cols = row.length;
+            else if (row.length !== this._cols) throw new Error('Matrix is not rectangular');
         });
-        this.square = this.rows === this.cols;
+        this.square = this._rows === this._cols;
         this.valuesTrans = [];
-        for (var j = 0; j < this.cols; j++) {
+        for (var j = 0; j < this._cols; j++) {
             this.valuesTrans.push([]);
-            for (var i = 0; i < this.rows; i++) {
+            for (var i = 0; i < this._rows; i++) {
                 this.valuesTrans[j].push(this._values[i][j]);
             }
         }
         this.symmetric = this.square;
-        for (var i = 1; this.symmetric && i < this.rows; i++) {
+        for (var i = 1; this.symmetric && i < this._rows; i++) {
             for (var j = 0; j < i; j++) {
                 if (this.get(i, j) !== this.get(j, i)) {
                     this.symmetric = false;
@@ -98,9 +97,9 @@ class Matrix {
      * @returns {number}
      */
     public get(row:number, col:number):number {
-        if (row <= 0 || row > this.rows)
+        if (row < 0 || row >= this.rows)
             throw new Error('Row number of out range.');
-        if (col <= 0 || col > this.cols)
+        if (col < 0 || col >= this.cols)
             throw new Error('Column number of out range.');
         return this._values[row][col];
     }
@@ -111,7 +110,7 @@ class Matrix {
      * @returns {number[]}
      */
     public getRow(row:number):number[] {
-        if (row <= 0 || row > this.rows)
+        if (row < 0 || row >= this.rows)
             throw new Error('Row number of out range.');
         return this._values[row];
     }
@@ -122,7 +121,7 @@ class Matrix {
      * @returns {number[]}
      */
     public getCol(col:number):number[] {
-        if (col <= 0 || col > this.cols)
+        if (col < 0 || col >= this.cols)
             throw new Error('Column number of out range.');
         return this.valuesTrans[col];
     }
@@ -167,9 +166,9 @@ class Matrix {
      * @param value
      */
     public set(row:number, col:number, value:number):void {
-        if (row <= 0 || row > this.rows)
+        if (row < 0 || row >= this.rows)
             throw new Error('Row number of out range.');
-        if (col <= 0 || col > this.cols)
+        if (col < 0 || col >= this.cols)
             throw new Error('Column number of out range.');
         this._values[row][col] = value;
     }
@@ -495,5 +494,3 @@ class Matrix {
     }
 
 }
-
-export = Matrix;

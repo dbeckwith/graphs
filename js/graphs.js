@@ -8,7 +8,7 @@
 ///<reference path="libs/twitter-bootstrap/js/bootstrap.d.ts"/>
 ///<reference path="libs/underscore.js/underscore.d.ts"/>
 ///<reference path="libs/mathjax.d.ts"/>
-var Matrix = require('./Matrix');
+///<reference path="Matrix.ts"/>
 function updateTex() {
     MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
 }
@@ -971,7 +971,7 @@ $(function () {
     var height;
     // TODO: move things when canvas resizes
     // TODO: consider canvas height more carefully, maybe should fill view vertically (use $(window).resize(handler) and window.innerHeight)
-    var svg = d3.select('canvas');
+    var svg = d3.select('#canvas');
     var $canvas = $('#canvas');
     width = $canvas.width();
     height = $canvas.height();
