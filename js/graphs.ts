@@ -1078,4 +1078,35 @@ $(function() {
     var height:number;
     // TODO: move things when canvas resizes
     // TODO: consider canvas height more carefully, maybe should fill view vertically (use $(window).resize(handler) and window.innerHeight)
+
+    var svg = d3.select('canvas');
+
+    var $canvas = $('#canvas');
+    width = $canvas.width();
+    height = $canvas.height();
+
+    // data for nodes and links
+    var nodes:Vertex[] = [];
+    var links:Edge[] = [];
+
+    // sets the given node as selected
+    function selectNode(node:D3.Selection):void {
+        console.log('select');
+        node.classed('node-selected', true);
+        node.select('circle')
+            .transition()
+            .duration(300)
+            .attr('r', 13);
+    }
+
+    // sets the given node as deselected
+    function deselectNode():void {
+        console.log('deselect');
+        var node = svg.selectAll('.node-selected')
+            .classed('node-selected', false);
+        node.selectAll('circle')
+            .transition()
+            .duration(100)
+            .attr('r', 8);
+    }
 });
