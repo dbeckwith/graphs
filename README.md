@@ -1,6 +1,7 @@
 # graphs
-Easily create common types of graphs or your own graphs and this app will give you lots of useful properties about it from graph theory.
-Useful for doing any kind of work in graph theory and needing to know certain properties of a graph.
+Easily create, edit, and manipulate your own graphs or choose from a selection of common graphs and see lots of useful
+properties about them. Useful for doing any kind of work in graph theory and needing to know certain properties of a
+graph.
 
 -----
 # Controls
@@ -12,3 +13,8 @@ Useful for doing any kind of work in graph theory and needing to know certain pr
   * Click another already connected vertex to remove the edge between them.
   * Hold <kbd>SHIFT</kbd> while connecting vertices to keep selecting the vertex you click on.
 * <kbd>CTRL</kbd>+click a vertex to delete it and any edges connected to it.
+
+----
+# Libraries
+Made with (Bootstrap)[http://getbootstrap.com/], (D3)[http://d3js.org/], (jQuery)[http://jquery.com/],
+(Underscore)[http://underscorejs.org/], and (TypeScript)[http://www.typescriptlang.org/].
