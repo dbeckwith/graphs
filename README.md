@@ -16,5 +16,5 @@ graph.
 
 ----
 # Libraries
-Made with (Bootstrap)[http://getbootstrap.com/], (D3)[http://d3js.org/], (jQuery)[http://jquery.com/],
-(Underscore)[http://underscorejs.org/], and (TypeScript)[http://www.typescriptlang.org/].
+Made with [Bootstrap](http://getbootstrap.com/), [D3](http://d3js.org/), [jQuery](http://jquery.com/),
+[Underscore](http://underscorejs.org/), and [TypeScript](http://www.typescriptlang.org/).
