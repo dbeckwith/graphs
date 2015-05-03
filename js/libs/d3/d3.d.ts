@@ -60,6 +60,7 @@ declare module D3 {
         altKey?: boolean;
         ctrlKey?: boolean;
         metaKey?: boolean;
+        shiftKey?: boolean;
         type: string;
     }
 
@@ -375,8 +376,8 @@ declare module D3 {
         /**
         * Request an arbitrary char-separated values file parser, like semicolon or what ever
         */
-        dsv: Dsv; 
-        
+        dsv: Dsv;
+
         /**
         * Request a tab-separated values (TSV) file
         */
@@ -721,7 +722,7 @@ declare module D3 {
         * returns the new parser
         *
         * @param separator seperator character
-        * @param contentType 
+        * @param contentType
         */
         (separator: string, contentType:string): (url: string, callback?: (error: any, response: any[]) => void )=> Xhr;
         /**
@@ -1391,12 +1392,12 @@ declare module D3 {
                 (accessor: (d: any, index: number) => number): ForceLayout;
             };
             /**
-             * If distance is specified, sets the maximum distance over which 
-             * charge forces are applied. If distance is not specified, returns 
-             * the current maximum charge distance, which defaults to infinity. 
-             * Specifying a finite charge distance improves the performance of 
-             * the force layout and produces a more localized layout; 
-             * distance-limited charge forces are especially useful in 
+             * If distance is specified, sets the maximum distance over which
+             * charge forces are applied. If distance is not specified, returns
+             * the current maximum charge distance, which defaults to infinity.
+             * Specifying a finite charge distance improves the performance of
+             * the force layout and produces a more localized layout;
+             * distance-limited charge forces are especially useful in
              * conjunction with custom gravity.
              */
             chargeDistance: {

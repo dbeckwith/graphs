@@ -12,35 +12,45 @@
     height: 500pt;
     border: 1px solid #ddd;
 }
+
 #canvas .node {
     pointer-events: none;
 }
+
 #canvas .node text {
     fill: white;
 }
+
 #canvas .node circle {
     fill: black;
     pointer-events: all;
 }
+
 #canvas .node:hover circle {
     fill: blue;
 }
+
 #canvas .node-selected circle {
     fill: green;
 }
+
 #canvas .link {
     stroke: blue;
 }
+
 #canvas .bg {
     fill: none;
     pointer-events: all;
 }
+
 #canvas .toolbar-btn {
     cursor: pointer;
 }
+
 #canvas .toolbar-btn circle {
     pointer-events: all;
 }
+
 #canvas .toolbar-btn image {
     pointer-events: none;
 }
@@ -53,15 +63,18 @@ tbody td .help-popover {
     overflow-y: scroll;
     height: 500pt;
 }
+
 #graph-prop-table tbody td.value .display-toggle {
     cursor: pointer;
     color: #400C78;
     transition: all linear 0.2s;
     display: block;
 }
+
 #graph-prop-table tbody td.value .display-toggle:hover {
     color: #8D55C9;
 }
+
 #graph-prop-table tbody td.value .value {
     font-weight: bold;
 }
@@ -70,6 +83,7 @@ tbody td .help-popover {
     margin-left: 3pt;
     width: 50pt;
 }
+
 #common-graphs-table tbody td.inputs div.form-group {
     margin-right: 8pt;
 }
