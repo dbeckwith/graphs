@@ -31,7 +31,7 @@ class Matrix {
         return Matrix.byFunc(size, size, (i, j) => +(i === j));
     }
 
-    private values:number[][];
+    private _values:number[][];
     private valuesTrans:number[][];
     private _rows:number;
     private _cols:number;
@@ -43,10 +43,10 @@ class Matrix {
      * @param values the values of the matrix, must be rectangular
      */
     public constructor(values:number[][]) {
-        this.values = values.slice(0);
-        this._rows = this.values.length;
+        this._values = values.slice(0);
+        this._rows = this._values.length;
         this._cols = 0;
-        this.values.forEach((row:number[]) => {
+        this._values.forEach((row:number[]) => {
             if (this.cols === 0) this.cols = row.length;
             else if (row.length !== this.cols) throw new Error('Matrix is not rectangular');
         });
@@ -55,7 +55,7 @@ class Matrix {
         for (var j = 0; j < this.cols; j++) {
             this.valuesTrans.push([]);
             for (var i = 0; i < this.rows; i++) {
-                this.valuesTrans[j].push(this.values[i][j]);
+                this.valuesTrans[j].push(this._values[i][j]);
             }
         }
         this.symmetric = this.square;
@@ -70,7 +70,21 @@ class Matrix {
     }
 
     /**
-     * Creates a shallow copy of this matrix.
+     * The two-dimensional array of values of this matrix.
+     * @returns {number[][]}
+     */
+    public get values():number[][] {
+        var vs:number[][] = [];
+        for (var i = 0; i < this.rows; i++) {
+            vs.push([]);
+            for (var j = 0; j < this.cols; j++)
+                vs[i].push(this._values[i][j]);
+        }
+        return vs;
+    }
+
+    /**
+     * Creates a copy of this matrix.
      * @returns {Matrix}
      */
     public copy():Matrix {
@@ -88,7 +102,7 @@ class Matrix {
             throw new Error('Row number of out range.');
         if (col <= 0 || col > this.cols)
             throw new Error('Column number of out range.');
-        return this.values[row][col];
+        return this._values[row][col];
     }
 
     /**
@@ -99,7 +113,7 @@ class Matrix {
     public getRow(row:number):number[] {
         if (row <= 0 || row > this.rows)
             throw new Error('Row number of out range.');
-        return this.values[row];
+        return this._values[row];
     }
 
     /**
@@ -157,7 +171,7 @@ class Matrix {
             throw new Error('Row number of out range.');
         if (col <= 0 || col > this.cols)
             throw new Error('Column number of out range.');
-        this.values[row][col] = value;
+        this._values[row][col] = value;
     }
 
     /**
@@ -341,9 +355,9 @@ class Matrix {
                     var temp = rowPerm[k];
                     rowPerm[k] = rowPerm[max_r];
                     rowPerm[max_r] = temp;
-                    var temp2 = A.values[k];
-                    A.values[k] = A.values[max_r];
-                    A.values[max_r] = temp2;
+                    var temp2 = A._values[k];
+                    A._values[k] = A._values[max_r];
+                    A._values[max_r] = temp2;
                 }
                 for (var i = k + 1; i < n; i++) {
                     A.set(i, k, A.get(i, k) / A.get(k, k));
@@ -433,7 +447,7 @@ class Matrix {
         return this._adjugate || (this._adjugate = this.cofactorMatrix.transpose);
     }
 
-    private _inv:Matrix;
+    private _inv:Matrix = null;
 
     /**
      * The inverse matrix of this matrix, which when multiplied by this matrix gives the identity. This matrix must be
@@ -444,6 +458,40 @@ class Matrix {
         if (!this.isInvertible)
             throw new Error('Matrix is non-invertible');
         return this._inv || (this._inv = this.adjugate.div(this.det));
+    }
+
+    private _trace:number = null;
+
+    /**
+     * The trace of this matrix. The trace of a matrix is the sum of its diagonal elements.
+     * @returns {number}
+     */
+    public get trace():number {
+        if (!this.square)
+            throw new Error('Matrix is not square');
+        if (this._trace === null) {
+            this._trace = 0;
+            for (var i = 0; i < this.rows; i++) {
+                this._trace += this.get(i, i);
+            }
+        }
+        return this._trace;
+    }
+
+    /**
+     * Gets a plain-text string representation of this matrix in array form.
+     * @returns {string}
+     */
+    public toString():string {
+        return '[' + _.map(this.values, (row) => '[' + row.join(', ') + ']').join(', ') + ']';
+    }
+
+    /**
+     * Gets a LaTeX-encoded string representation of this matrix.
+     * @returns {string}
+     */
+    public toLatex():string {
+        return '\\begin{bmatrix}' + _.map(this.values, (row) => row.join('&')).join('\\\\') + '\\end{bmatrix}';
     }
 
 }
