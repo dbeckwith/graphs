@@ -776,8 +776,8 @@ $(function () {
             }
         },
         durer: {
-            desc: 'D�rer graph',
-            longDesc: 'The D�rer graph',
+            desc: 'Dürer graph',
+            longDesc: 'The Dürer graph',
             link: 'http://en.wikipedia.org/wiki/D%C3%BCrer_graph',
             verts: 12,
             edges: [
@@ -806,8 +806,8 @@ $(function () {
             }
         },
         kantor: {
-            desc: 'M�bius-Kantor graph',
-            longDesc: 'The M�bius-Kantor graph',
+            desc: 'Möbius-Kantor graph',
+            longDesc: 'The Möbius-Kantor graph',
             link: 'http://en.wikipedia.org/wiki/M%C3%B6bius%E2%80%93Kantor_graph',
             verts: 16,
             edges: [
