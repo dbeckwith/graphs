@@ -865,6 +865,45 @@ $(function() {
                 gt.layout = graphLayouts.radial(gt.vs.length);
                 return gt;
             }
+        },
+        turan: {
+            desc: 'Turán graph',
+            longDesc: 'The graph of order n that does not contain an (r+1)-clique of maximal size.',
+            link: 'http://en.wikipedia.org/wiki/Tur%C3%A1n_graph',
+            math: '\\(T\\!\\left(n,r\\right)\\)',
+            args: {
+                n: {
+                    min: 1,
+                    def: 6
+                },
+                r: {
+                    min: 1,
+                    def: 3
+                }
+            },
+            verts: '\\(n\\)',
+            edges: '\\(\\left\\lfloor\\frac{\\left(r-1\\right)n^2}{2r}\\right\\rfloor\\)',
+            make: (n:number, r:number) => {
+                if (r > n)
+                    return <GraphTemplate>{ vs: [], es: [], layout: graphLayouts.radial(0) };
+                var gt:GraphTemplate = { vs: _.range(n), es: [], layout: graphLayouts.radial(n) };
+                var sets:number[][] = [];
+                for (var i = 0, s = 0; i < n; s++) {
+                    var setSize = s < n % r ? Math.floor(n / r) + 1 : Math.floor(n / r);
+                    sets.push([]);
+                    for (var j = 0; j < setSize; j++)
+                        sets[s].push(j + i);
+                    i += setSize;
+                }
+                for (var i = 0; i < sets.length; i++)
+                    for (var j = i + 1; j < sets.length; j++)
+                        sets[i].forEach((v1:number) => {
+                            sets[j].forEach((v2:number) => {
+                                gt.es.push([v1, v2]);
+                            });
+                        });
+                return gt;
+            }
         }
     };
 
