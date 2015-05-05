@@ -748,7 +748,7 @@ $(function () {
         },
         turan: {
             desc: 'Turán graph',
-            longDesc: 'The graph of order n that does not contain an (r+1)-clique of maximal size.',
+            longDesc: 'The graph of order n that does not contain an (r+1)-clique and is of maximal size.',
             link: 'http://en.wikipedia.org/wiki/Tur%C3%A1n_graph',
             math: '\\(T\\!\\left(n,r\\right)\\)',
             args: {
